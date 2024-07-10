@@ -7,29 +7,30 @@ module.exports = {
     path: path.resolve(__dirname, 'dist'),
     filename: 'bundle.js',
   },
-  mode: 'development',  // Set mode to 'development' or 'production'
-  plugins: [
-    new HtmlWebpackPlugin({
-      template: './public/index.html',
-      filename: 'index.html',
-    }),
-  ],
-  devServer: {
-    contentBase: path.join(__dirname, 'dist'),
-    compress: true,
-    port: 9000,
-  },
   module: {
     rules: [
       {
-        test: /\.js$/,
+        test: /\.(js|jsx)$/,
         exclude: /node_modules/,
-        use: 'babel-loader',
+        use: {
+          loader: 'babel-loader',
+        },
       },
       {
         test: /\.css$/,
         use: ['style-loader', 'css-loader'],
       },
     ],
+  },
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: './public/index.html',
+    }),
+  ],
+  devServer: {
+    static: path.join(__dirname, 'dist'),  // Updated from contentBase to static
+    compress: true,
+    port: 9000,
+    open: true,
   },
 };
