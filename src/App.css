@@ -49,13 +49,13 @@ body {
 }
 
 .btn-primary {
-    background-color: #00b39b; /* Updated primary button color */
-    border-color: #00b39b; /* Updated border color */
+    background-color: #405D45 !important; /* Updated primary button color with !important */
+    border-color: #405D45 !important; /* Updated border color with !important */
 }
 
 .btn-primary:hover {
-    background-color: #008f7a; /* Darker shade for hover state */
-    border-color: #008f7a; /* Darker shade for border on hover state */
+    background-color: #405D45 !important; /* Darker shade for hover state with !important */
+    border-color: #405D45 !important; /* Darker shade for border on hover state with !important */
 }
 
 .w-100 {
