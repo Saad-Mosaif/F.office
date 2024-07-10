@@ -34,47 +34,44 @@ const Register = () => {
 
   return (
     <div className="container">
-      <div className="col-md-6">
-        <div className="card">
-          <div className="card-body">
-            <h3 className="card-title text-center">Register</h3>
-            <form onSubmit={handleRegister}>
-              <div className="mb-3">
-                <label htmlFor="email" className="form-label">Email address</label>
-                <input
-                  type="email"
-                  className="form-control"
-                  id="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
-              <div className="mb-3">
-                <label htmlFor="password" className="form-label">Password</label>
-                <input
-                  type="password"
-                  className="form-control"
-                  id="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
-              <div className="mb-3">
-                <label htmlFor="confirmPassword" className="form-label">Confirm Password</label>
-                <input
-                  type="password"
-                  className="form-control"
-                  id="confirmPassword"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                />
-              </div>
-              {error && <div className="text-danger">{error}</div>}
-              {message && <div className="text-success">{message}</div>}
-              <button type="submit" className="btn btn-primary w-100">Register</button>
-            </form>
-          </div>
+      <div className="wrapper">
+        <div className="logo">
+          <img src="/public/key.png" alt="Lock Icon" />
         </div>
+        <div className="name">Register</div>
+        <form onSubmit={handleRegister}>
+          <div className="form-field d-flex align-items-center">
+            <span className="far fa-user"></span>
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+          <div className="form-field d-flex align-items-center">
+            <span className="fas fa-key"></span>
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+          <div className="form-field d-flex align-items-center">
+            <span className="fas fa-key"></span>
+            <input
+              type="password"
+              placeholder="Confirm Password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
+          </div>
+          {error && <div className="text-danger">{error}</div>}
+          {message && <div className="text-success">{message}</div>}
+          <button type="submit" className="btn mt-3">Register</button>
+        </form>
+        <a href="#">Already have an account? Login</a>
       </div>
     </div>
   );
