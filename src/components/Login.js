@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import '../App.css';
+import { login } from '../api';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -7,21 +8,20 @@ const Login = () => {
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
     setMessage('');
 
-    // Basic validation
     if (email === '' || password === '') {
       setError('Email and password are required');
       return;
     }
 
-    // Dummy credentials check
-    if (email === 'test@example.com' && password === 'password') {
-      setMessage('Login successful!');
-    } else {
+    try {
+      const response = await login(email, password);
+      setMessage(response.data);
+    } catch (error) {
       setError('Invalid email or password');
     }
   };
