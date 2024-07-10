@@ -1,61 +1,68 @@
+/* General styles */
+body {
+    background-image: url('/src/background.png');/* Ensure the image is in the public folder */
+    background-size: cover;
+    background-position: center;
+    font-family: 'Arial', sans-serif;
+}
+
 /* Center the form on the page */
 .container {
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-  }
-  
-  /* Card styles */
-  .card {
+}
+
+/* Card styles */
+.card {
+    --bs-card-spacer-y: 4rem;
     border: none;
     border-radius: 0.5rem;
     box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-  }
-  
-  .card-body {
-    padding: 2rem;
-  }
-  
-  .card-title {
+}
+
+.container .card .card-body {
+    padding: 4rem;
+}
+
+.card-title {
     margin-bottom: 2rem;
     font-weight: 500;
     font-size: 1.5rem;
-  }
-  
-  /* Form styles */
-  .form-label {
+}
+
+/* Form styles */
+.form-label {
     font-weight: 500;
     font-size: 1rem;
-  }
-  
-  .form-control {
+}
+
+.form-control {
     border-radius: 0.25rem;
-  }
-  
-  .btn {
+}
+
+.btn {
     font-weight: 500;
     border-radius: 0.25rem;
     padding: 0.75rem;
-  }
-  
-  .btn-primary {
-    background-color: #007bff;
-    border-color: #007bff;
-  }
-  
-  .btn-primary:hover {
-    background-color: #0056b3;
-    border-color: #0056b3;
-  }
-  
-  /* Error message styles */
-  .text-danger {
+}
+
+.btn-primary {
+    background-color: #00b39b; /* Updated primary button color */
+    border-color: #00b39b; /* Updated border color */
+}
+
+.btn-primary:hover {
+    background-color: #008f7a; /* Darker shade for hover state */
+    border-color: #008f7a; /* Darker shade for border on hover state */
+}
+
+.w-100 {
+    width: 100%;
+}
+
+/* Error message styles */
+.text-danger {
     font-size: 0.875rem;
-  }
-  
-  /* General styles */
-  body {
-    background-color: #f8f9fa;
-    font-family: 'Arial', sans-serif;
-  }
+}
