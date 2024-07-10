@@ -1,11 +1,15 @@
 import React from 'react';
+import UserList from './components/UserList';
+import UserForm from './components/UserForm';
 
-const App = () => {
-  return (
-    <div>
-      <h1>Hello, React!</h1>
-    </div>
-  );
-};
+function App() {
+    return (
+        <div className="App">
+            <h1>User Management</h1>
+            <UserForm />
+            <UserList />
+        </div>
+    );
+}
 
 export default App;
