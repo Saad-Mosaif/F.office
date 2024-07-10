@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import '../App.css';
+import { register } from '../api';
 
 const Register = () => {
   const [email, setEmail] = useState('');
@@ -8,7 +9,7 @@ const Register = () => {
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
 
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
     setError('');
     setMessage('');
@@ -24,11 +25,11 @@ const Register = () => {
       return;
     }
 
-    // Dummy registration check
-    if (email === 'test@example.com') {
-      setError('This email is already registered');
-    } else {
-      setMessage('Registration successful!');
+    try {
+      const response = await register(email, password);
+      setMessage(response.data);
+    } catch (error) {
+      setError('Registration failed');
     }
   };
 
