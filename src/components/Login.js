@@ -34,9 +34,9 @@ const Login = () => {
   };
 
   const maskEmail = (email) => {
-    const [localPart, domain] = email.split('.');
-    const maskedLocalPart = localPart.substring(0, 2) + '********';
-    return `${maskedLocalPart}.${domain}`;
+    const [localPart, domain] = email.split('@');
+    const maskedLocalPart = localPart.substring(0, 2) + '*'.repeat(localPart.length - 2);
+    return `${maskedLocalPart}@${domain}`;
   };
 
   return (
