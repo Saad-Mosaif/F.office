@@ -1,12 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import '../App.css';
 import { login } from '../api';
+import { useNavigate } from 'react-router-dom';
+import { UserContext } from '../UserContext';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
+  const { setUser } = useContext(UserContext);
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -21,9 +25,18 @@ const Login = () => {
     try {
       const response = await login(email, password);
       setMessage(response.data);
+      const maskedEmail = maskEmail(email); // Mask the email
+      setUser({ email: maskedEmail }); // Set the masked email in the user context
+      navigate('/main'); // Redirect to Mainpg component
     } catch (error) {
       setError('Invalid email or password');
     }
+  };
+
+  const maskEmail = (email) => {
+    const [localPart, domain] = email.split('.');
+    const maskedLocalPart = localPart.substring(0, 2) + '********';
+    return `${maskedLocalPart}.${domain}`;
   };
 
   return (
