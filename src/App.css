@@ -1,9 +1,10 @@
 /* General styles */
 body {
-    background-image: url('/src/background.png');/* Ensure the image is in the public folder */
-    background-size: cover;
-    background-position: center;
     font-family: 'Arial', sans-serif;
+    background-color: #6f8d74 !important;
+    background-position: center;
+    height: 100vh;
+    margin: 0;
 }
 
 /* Center the form on the page */

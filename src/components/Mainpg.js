@@ -1,5 +1,7 @@
+// components/Mainpg.js
 import React, { useContext } from 'react';
-import '../App.css'; // Assuming you want to include any global styles
+import { Link } from 'react-router-dom';
+import '../App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { UserContext } from '../UserContext';
 
@@ -16,6 +18,9 @@ const Mainpg = () => {
               <p className="card-text text-center">
                 {user ? `Welcome, ${user.email}!` : 'This is the main page of the application.'}
               </p>
+              <div className="text-center">
+                <Link to="/form" className="btn btn-primary">Create New Entry</Link>
+              </div>
             </div>
           </div>
         </div>
