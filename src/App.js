@@ -7,7 +7,6 @@ import Mainpg from './components/Mainpg';
 import Login from './components/Login';
 import Register from './components/Register';
 import Form from './components/Form';
-import UoTable from './components/UoTable'; // Import UoTable component
 import { UserProvider } from './UserContext';
 
 function App() {
@@ -32,12 +31,6 @@ function App() {
                   <li className="nav-item">
                     <Link className="nav-link" to="/register">Register</Link>
                   </li>
-                  <li className="nav-item">
-                    <Link className="nav-link" to="/form">Form</Link>
-                  </li>
-                  <li className="nav-item">
-                    <Link className="nav-link" to="/uo-table">Uo Table</Link> {/* Add link to Uo Table */}
-                  </li>
                 </ul>
               </div>
             </div>
@@ -48,7 +41,6 @@ function App() {
             <Route path="/main" element={<Mainpg />} />
             <Route path="/register" element={<Register />} />
             <Route path="/form" element={<Form />} />
-            <Route path="/uo-table" element={<UoTable />} /> {/* Add route for Uo Table */}
           </Routes>
         </div>
       </Router>
