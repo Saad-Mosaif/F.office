@@ -19,7 +19,8 @@ const Mainpg = () => {
                 {user ? `Welcome, ${user.email}!` : 'This is the main page of the application.'}
               </p>
               <div className="text-center">
-                <Link to="/form" className="btn btn-primary">Create New Entry</Link>
+                <Link to="/form" className="btn btn-primary m-2">Create New Entry</Link>
+                <Link to="/uo-list" className="btn btn-secondary m-2">Search in List</Link>
               </div>
             </div>
           </div>
