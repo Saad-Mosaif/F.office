@@ -67,3 +67,70 @@ body {
 .text-danger {
     font-size: 0.875rem;
 }
+
+/* Table-specific styles */
+.table-container {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    width: 90%; /* Increase the width for better presentation */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th, .table td {
+    text-align: center;
+    vertical-align: middle;
+    padding: 10px;
+    border: none; /* Remove borders between columns */
+}
+
+.table thead th {
+    background-color: #405D45; /* Dark green */
+    color: white;
+    box-shadow: 0px 2px 2px -1px rgba(0, 0, 0, 0.2); /* Soft shadow for the header */
+}
+
+.table tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.table tbody tr:hover {
+    background-color: #ddd;
+}
+
+/* Additional styles for smooth look */
+.table th {
+    font-weight: bold;
+    padding: 12px 15px;
+}
+
+.table td {
+    padding: 12px 15px;
+}
+
+.table tbody tr {
+    border-bottom: 1px solid #e9ecef; /* Add a smooth bottom border to rows */
+}
+
+.table tbody tr:last-child {
+    border-bottom: none; /* Remove the border for the last row */
+}
+
+/* Title styles */
+.table-title {
+    color: #343a40;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center; /* Center align the header */
+    font-size: 24px; /* Adjust the font size */
+    margin-top: 0; /* Adjust the top margin */
+}

@@ -1,4 +1,3 @@
-// App.js
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import './App.css';
@@ -8,6 +7,7 @@ import Mainpg from './components/Mainpg';
 import Login from './components/Login';
 import Register from './components/Register';
 import Form from './components/Form';
+import UoTable from './components/UoTable'; // Import UoTable component
 import { UserProvider } from './UserContext';
 
 function App() {
@@ -18,7 +18,10 @@ function App() {
           <nav className="navbar navbar-expand-lg navbar-light bg-light">
             <div className="container-fluid">
               <Link className="navbar-brand" to="/">React Auth</Link>
-              <div className="collapse navbar-collapse">
+              <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span className="navbar-toggler-icon"></span>
+              </button>
+              <div className="collapse navbar-collapse" id="navbarNav">
                 <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                   <li className="nav-item">
                     <Link className="nav-link" to="/">Home</Link>
@@ -29,16 +32,23 @@ function App() {
                   <li className="nav-item">
                     <Link className="nav-link" to="/register">Register</Link>
                   </li>
+                  <li className="nav-item">
+                    <Link className="nav-link" to="/form">Form</Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link className="nav-link" to="/uo-table">Uo Table</Link> {/* Add link to Uo Table */}
+                  </li>
                 </ul>
               </div>
             </div>
           </nav>
           <Routes>
-            <Route path="/" element={<Login  />} />
+            <Route path="/" element={<Login />} />
             <Route path="/login" element={<Login />} />
             <Route path="/main" element={<Mainpg />} />
             <Route path="/register" element={<Register />} />
             <Route path="/form" element={<Form />} />
+            <Route path="/uo-table" element={<UoTable />} /> {/* Add route for Uo Table */}
           </Routes>
         </div>
       </Router>

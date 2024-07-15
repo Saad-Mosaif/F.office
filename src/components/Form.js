@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../App.css';
@@ -10,6 +11,8 @@ const Form = () => {
   const [catUO, setCatUO] = useState('');
   const [city, setCity] = useState('');
   const [department, setDepartment] = useState('');
+
+  const navigate = useNavigate(); // Initialize useNavigate
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -27,6 +30,7 @@ const Form = () => {
       const response = await axios.post('http://localhost:8080/api/uo', data);
       console.log(response.data);
       alert('Entry created successfully!');
+      navigate('/uo-table'); // Navigate to UoTable page
     } catch (error) {
       console.error('There was an error creating the entry!', error);
       alert('Failed to create entry');
