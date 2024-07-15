@@ -17,7 +17,7 @@ function App() {
     <UserProvider>
       <Router>
         <div className="App">
-          <nav className="navbar navbar-expand-lg navbar-light bg-light">
+        <nav className="navbar navbar-expand-lg navbar-light bg-light sticky-top">
             <div className="container-fluid">
               <Link className="navbar-brand" to="/">React Auth</Link>
               <div className="collapse navbar-collapse">
