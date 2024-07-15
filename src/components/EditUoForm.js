@@ -12,9 +12,11 @@ const EditUoForm = () => {
     codeDR: '',
     typeUO: '',
     ville: '',
-    cat_uo: '',
+    catUo: '',
     department: ''
   });
+
+  const catUoOptions = ['DC', 'DR', 'CMP', 'EFP'];
 
   useEffect(() => {
     fetchUo();
@@ -77,49 +79,43 @@ const EditUoForm = () => {
         </div>
         <div className="mb-3">
           <label htmlFor="typeUO" className="form-label">Type UO</label>
-          <select
+          <input
+            type="text"
             className="form-control"
             id="typeUO"
             name="typeUO"
             value={uo.typeUO}
             onChange={handleChange}
             required
-          >
-            <option value="">Select Type UO</option>
-            <option value="DC">DC</option>
-            <option value="DR">DR</option>
-            <option value="CMP">CMP</option>
-            <option value="EFP">EFP</option>
-          </select>
+          />
         </div>
         <div className="mb-3">
           <label htmlFor="ville" className="form-label">City</label>
-          <select
+          <input
+            type="text"
             className="form-control"
             id="ville"
             name="ville"
             value={uo.ville}
             onChange={handleChange}
             required
-          >
-            <option value="">Select City</option>
-            <option value="CASABLANCA">Casablanca</option>
-            <option value="RABAT">Rabat</option>
-            <option value="MARRAKECH">Marrakech</option>
-            <option value="TANGER">Tanger</option>
-          </select>
+          />
         </div>
         <div className="mb-3">
-          <label htmlFor="cat_uo" className="form-label">Category UO</label>
-          <input
-            type="text"
+          <label htmlFor="catUo" className="form-label">Category UO</label>
+          <select
             className="form-control"
-            id="cat_uo"
-            name="cat_uo"
-            value={uo.cat_uo}
+            id="catUo"
+            name="catUo"
+            value={uo.catUo}
             onChange={handleChange}
             required
-          />
+          >
+            <option value="">Select Category UO</option>
+            {catUoOptions.map(cat => (
+              <option key={cat} value={cat}>{cat}</option>
+            ))}
+          </select>
         </div>
         <div className="mb-3">
           <label htmlFor="department" className="form-label">Department</label>

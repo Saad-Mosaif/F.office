@@ -25,4 +25,9 @@ export const getUoById = async (id) => {
 
 export const updateUo = async (id, uo) => {
     return await axios.put(`${UO_API_URL}/${id}`, uo);
+    
+};
+
+export const getAllCatUo = async () => {
+    return await axios.get(CAT_UO_API_URL);
 };
