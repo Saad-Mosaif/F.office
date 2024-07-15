@@ -50,87 +50,96 @@ const EditUoForm = () => {
   };
 
   return (
-    <div className="container">
-      <h2 className="text-center my-4">Edit Uo</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="mb-3">
-          <label htmlFor="intituler" className="form-label">Name</label>
-          <input
-            type="text"
-            className="form-control"
-            id="intituler"
-            name="intituler"
-            value={uo.intituler}
-            onChange={handleChange}
-            required
-          />
+    <div className="container-fluid d-flex justify-content-center align-items-center" style={{ minHeight: '100vh', marginTop: '100px' }}>
+      <div className="card w-50">
+        <div className="card-body">
+          <h2 className="card-title text-center mb-4">Edit Uo</h2>
+          <form onSubmit={handleSubmit}>
+            <div className="mb-3">
+              <label htmlFor="intituler" className="form-label">Name</label>
+              <input
+                type="text"
+                className="form-control"
+                id="intituler"
+                name="intituler"
+                value={uo.intituler}
+                onChange={handleChange}
+                placeholder="Name"
+                required
+              />
+            </div>
+            <div className="mb-3">
+              <label htmlFor="codeDR" className="form-label">Code</label>
+              <input
+                type="text"
+                className="form-control"
+                id="codeDR"
+                name="codeDR"
+                value={uo.codeDR}
+                onChange={handleChange}
+                placeholder="Code"
+                required
+              />
+            </div>
+            <div className="mb-3">
+              <label htmlFor="typeUO" className="form-label">Type UO</label>
+              <input
+                type="text"
+                className="form-control"
+                id="typeUO"
+                name="typeUO"
+                value={uo.typeUO}
+                onChange={handleChange}
+                placeholder="Type UO"
+                required
+              />
+            </div>
+            <div className="mb-3">
+              <label htmlFor="ville" className="form-label">City</label>
+              <input
+                type="text"
+                className="form-control"
+                id="ville"
+                name="ville"
+                value={uo.ville}
+                onChange={handleChange}
+                placeholder="City"
+                required
+              />
+            </div>
+            <div className="mb-3">
+              <label htmlFor="catUo" className="form-label">Category UO</label>
+              <select
+                className="form-control"
+                id="catUo"
+                name="catUo"
+                value={uo.catUo}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Select Category UO</option>
+                {catUoOptions.map(cat => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+              </select>
+            </div>
+            <div className="mb-3">
+              <label htmlFor="department" className="form-label">Department</label>
+              <input
+                type="text"
+                className="form-control"
+                id="department"
+                name="department"
+                value={uo.department}
+                onChange={handleChange}
+                placeholder="Department"
+                required
+              />
+            </div>
+            <button type="submit" className="btn btn-primary w-100">Update</button>
+          </form>
         </div>
-        <div className="mb-3">
-          <label htmlFor="codeDR" className="form-label">Code</label>
-          <input
-            type="text"
-            className="form-control"
-            id="codeDR"
-            name="codeDR"
-            value={uo.codeDR}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="mb-3">
-          <label htmlFor="typeUO" className="form-label">Type UO</label>
-          <input
-            type="text"
-            className="form-control"
-            id="typeUO"
-            name="typeUO"
-            value={uo.typeUO}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="mb-3">
-          <label htmlFor="ville" className="form-label">City</label>
-          <input
-            type="text"
-            className="form-control"
-            id="ville"
-            name="ville"
-            value={uo.ville}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="mb-3">
-          <label htmlFor="catUo" className="form-label">Category UO</label>
-          <select
-            className="form-control"
-            id="catUo"
-            name="catUo"
-            value={uo.catUo}
-            onChange={handleChange}
-            required
-          >
-            <option value="">Select Category UO</option>
-            {catUoOptions.map(cat => (
-              <option key={cat} value={cat}>{cat}</option>
-            ))}
-          </select>
-        </div>
-        <div className="mb-3">
-          <label htmlFor="department" className="form-label">Department</label>
-          <input
-            type="text"
-            className="form-control"
-            id="department"
-            name="department"
-            value={uo.department}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <button type="submit" className="btn btn-primary w-100">Update</button>
-      </form>
+      </div>
     </div>
   );
 };

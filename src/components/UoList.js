@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { getAllUo, deleteUo } from '../api';
 import { Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import '../App.css';
 
 const UoList = () => {
@@ -30,37 +31,40 @@ const UoList = () => {
   };
 
   return (
-    <div className="container">
-      <h2 className="text-center my-4">Unit of Operations List</h2>
-      <table className="table table-bordered">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Code</th>
-            <th>Type UO</th>
-            <th>City</th>
-            <th>Category UO</th>
-            <th>Department</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {uos.map(uo => (
-            <tr key={uo.id}>
-              <td>{uo.intituler}</td>
-              <td>{uo.codeDR}</td>
-              <td>{uo.typeUO}</td>
-              <td>{uo.ville}</td>
-              <td>{uo.catUo}</td>
-              <td>{uo.department}</td>
-              <td>
-                <Link to={`/edit-uo/${uo.id}`} className="btn btn-primary btn-sm mr-2">Edit</Link>
-                <button onClick={() => handleDelete(uo.id)} className="btn btn-danger btn-sm">Delete</button>
-              </td>
+    <div className="container wider-container">
+      <div className="table-container">
+      <h2 className="table-title">Unit of Operations List</h2>
+      
+        <table className="table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Code</th>
+              <th>Type UO</th>
+              <th>City</th>
+              <th>Category UO</th>
+              <th>Department</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {uos.map(uo => (
+              <tr key={uo.id}>
+                <td>{uo.intituler}</td>
+                <td>{uo.codeDR}</td>
+                <td>{uo.typeUO}</td>
+                <td>{uo.ville}</td>
+                <td>{uo.catUo}</td>
+                <td>{uo.department}</td>
+                <td>
+                  <Link to={`/edit-uo/${uo.id}`} className="btn btn-primary btn-sm mr-2">Edit</Link>
+                  <button onClick={() => handleDelete(uo.id)} className="btn btn-danger btn-sm">Delete</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
