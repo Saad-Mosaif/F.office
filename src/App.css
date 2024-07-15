@@ -1,10 +1,13 @@
 /* General styles */
 body {
     font-family: 'Arial', sans-serif;
-    background-color: #6f8d74 !important;
+    background: linear-gradient(to right, #6f8d74, #8f9d84);
     background-position: center;
     height: 100vh;
     margin: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 /* Sticky navbar styles */
@@ -14,55 +17,63 @@ body {
     top: 0;
     z-index: 1020; 
 }
+
 /* Center the form on the page */
 .container {
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
+    padding: 20px;
 }
 
 /* Wider container specific styles */
 .wider-container {
     width: 90%;
-    max-width: 1200px; /* Adjust the max-width as needed */
+    max-width: 1200px;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-/* Card styles */
-.card {
-    --bs-card-spacer-y: 4rem;
-    border: none;
+/* Jumbotron styles */
+.jumbotron {
+    background-color: #405D45;
+    color: white;
     border-radius: 0.5rem;
-    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    padding: 2rem 1rem;
 }
 
-.container .card .card-body {
-    padding: 4rem;
+/* Card styles */
+.card {
+    border: none;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    margin: 1rem 0; /* Add margin to separate cards vertically */
+}
+
+.card .card-body {
+    padding: 2rem;
 }
 
 .card-title {
-    margin-bottom: 2rem;
-    font-weight: 500;
-    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+    font-size: 1.75rem;
 }
 
-/* Form styles */
-.form-label {
-    font-weight: 500;
+.card-text {
     font-size: 1rem;
+    margin-bottom: 1.5rem;
 }
 
-.form-control {
-    border-radius: 0.25rem;
-}
-
+/* Button styles */
 .btn {
     font-weight: 500;
     border-radius: 0.25rem;
-    padding: 0.75rem;
+    padding: 0.75rem 1.25rem;
+    transition: all 0.3s ease;
 }
 
 .btn-primary {
@@ -71,17 +82,18 @@ body {
 }
 
 .btn-primary:hover {
-    background-color: #405D45 !important;
-    border-color: #405D45 !important;
+    background-color: #324b38 !important;
+    border-color: #324b38 !important;
 }
 
-.w-100 {
-    width: 100%;
+.btn-secondary {
+    background-color: #6f8d74 !important;
+    border-color: #6f8d74 !important;
 }
 
-/* Error message styles */
-.text-danger {
-    font-size: 0.875rem;
+.btn-secondary:hover {
+    background-color: #5b735e !important;
+    border-color: #5b735e !important;
 }
 
 /* Table-specific styles */
@@ -105,8 +117,8 @@ body {
 .table th, .table td {
     text-align: center;
     vertical-align: middle;
-    padding: 12px 15px; /* Unified padding */
-    border: none; /* Remove borders between columns */
+    padding: 12px 15px;
+    border: none;
 }
 
 .table thead th {

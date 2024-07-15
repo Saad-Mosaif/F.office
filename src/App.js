@@ -34,10 +34,15 @@ function AppContent() {
                   </li>
                 </>
               )}
-              <li className="nav-item">
-                <Link className="nav-link" to="/uo-list">Uo List</Link>
-              </li>
+              {user && (
+                <li className="nav-item">
+                  <Link className="nav-link" to="/uo-list">Uo List</Link>
+                </li>
+              )}
             </ul>
+            {user && (
+              <button className="btn btn-outline-danger" onClick={() => setUser(null)}>Logout</button>
+            )}
           </div>
         </div>
       </nav>
@@ -46,9 +51,9 @@ function AppContent() {
         <Route path="/login" element={<Login />} />
         <Route path="/main" element={<Mainpg />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/form" element={<Form />} />
-        <Route path="/uo-list" element={<UoList />} />
-        <Route path="/edit-uo/:id" element={<EditUoForm />} />
+        <Route path="/form" element={user ? <Form /> : <Login />} />
+        <Route path="/uo-list" element={user ? <UoList /> : <Login />} />
+        <Route path="/edit-uo/:id" element={user ? <EditUoForm /> : <Login />} />
       </Routes>
     </div>
   );
