@@ -1,3 +1,4 @@
+// App.js
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import './App.css';
@@ -7,6 +8,8 @@ import Mainpg from './components/Mainpg';
 import Login from './components/Login';
 import Register from './components/Register';
 import Form from './components/Form';
+import UoList from './components/UoList';
+import EditUoForm from './components/EditUoForm';
 import { UserProvider } from './UserContext';
 
 function App() {
@@ -17,10 +20,7 @@ function App() {
           <nav className="navbar navbar-expand-lg navbar-light bg-light">
             <div className="container-fluid">
               <Link className="navbar-brand" to="/">React Auth</Link>
-              <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span className="navbar-toggler-icon"></span>
-              </button>
-              <div className="collapse navbar-collapse" id="navbarNav">
+              <div className="collapse navbar-collapse">
                 <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                   <li className="nav-item">
                     <Link className="nav-link" to="/">Home</Link>
@@ -30,6 +30,9 @@ function App() {
                   </li>
                   <li className="nav-item">
                     <Link className="nav-link" to="/register">Register</Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link className="nav-link" to="/uo-list">Uo List</Link>
                   </li>
                 </ul>
               </div>
@@ -41,6 +44,8 @@ function App() {
             <Route path="/main" element={<Mainpg />} />
             <Route path="/register" element={<Register />} />
             <Route path="/form" element={<Form />} />
+            <Route path="/uo-list" element={<UoList />} />
+            <Route path="/edit-uo/:id" element={<EditUoForm />} />
           </Routes>
         </div>
       </Router>
