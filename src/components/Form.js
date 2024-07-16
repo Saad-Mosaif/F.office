@@ -5,8 +5,6 @@ import { getAllUsers, createUser } from '../services/UserService'; // Adjust imp
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../App.css';
 
-const UO_API_URL = 'http://localhost:8080/api/uo';
-
 const Form = () => {
   const [name, setName] = useState('');
   const [codeDR, setCodeDR] = useState('');
@@ -14,45 +12,26 @@ const Form = () => {
   const [catUO, setCatUO] = useState('');
   const [city, setCity] = useState('');
   const [department, setDepartment] = useState('');
-  const [showToast, setShowToast] = useState(false);
-  const [toastMessage, setToastMessage] = useState('');
-  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const data = {
+      intituler: name,
+      codeDR: codeDR,
+      typeUO: typeUO,
+      catUo: catUO,
+      ville: city,
+      department: department,
+    };
+
     try {
-      const checkResponse = await axios.get(`${UO_API_URL}/check-intituler`, {
-        params: { intituler: name },
-      });
-
-      if (!checkResponse.data) {
-        setToastMessage('Intituler is not unique!');
-        setShowToast(true);
-        return;
-      }
-
-      const data = {
-        intituler: name,
-        codeDR: codeDR,
-        typeUO: typeUO,
-        cat_uo: catUO,
-        ville: city,
-        department: department,
-      };
-
-      const response = await axios.post(UO_API_URL, data);
+      const response = await axios.post('http://localhost:8080/api/uo', data);
       console.log(response.data);
-      setToastMessage('Entry created successfully!');
-      setShowToast(true);
-      setTimeout(() => {
-        setShowToast(false);
-        navigate('/uo-list');
-      }, 1000); // Adjust the timeout duration as needed
+      alert('Entry created successfully!');
     } catch (error) {
       console.error('There was an error creating the entry!', error);
-      setToastMessage('Failed to create entry');
-      setShowToast(true);
+      alert('Failed to create entry');
     }
   };
 
@@ -101,14 +80,18 @@ const Form = () => {
             </div>
             <div className="mb-3">
               <label htmlFor="catUO" className="form-label">Cat UO</label>
-              <input 
-                type="text" 
+              <select 
                 className="form-control" 
                 id="catUO" 
                 value={catUO} 
-                onChange={(e) => setCatUO(e.target.value)} 
-                placeholder="Cat UO" 
-              />
+                onChange={(e) => setCatUO(e.target.value)}
+              >
+                <option value="">Select Cat UO</option>
+                <option value="DC">DC</option>
+                <option value="DR">DR</option>
+                <option value="CMP">CMP</option>
+                <option value="EFP">EFP</option>
+              </select>
             </div>
             <div className="mb-3">
               <label htmlFor="city" className="form-label">City</label>
@@ -140,17 +123,6 @@ const Form = () => {
           </form>
         </div>
       </div>
-      {showToast && (
-        <div className="toast show position-fixed bottom-0 end-0 m-3" role="alert" aria-live="assertive" aria-atomic="true">
-          <div className="toast-header">
-            <strong className="me-auto">{toastMessage.includes('successfully') ? 'Success' : 'Error'}</strong>
-            <button type="button" className="btn-close" aria-label="Close" onClick={() => setShowToast(false)}></button>
-          </div>
-          <div className="toast-body">
-            {toastMessage}
-          </div>
-        </div>
-      )}
     </div>
   );
 };
