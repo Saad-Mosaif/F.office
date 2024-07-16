@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Link, useLocation } from 'react-router-dom';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
@@ -12,7 +12,8 @@ import EditUoForm from './components/EditUoForm';
 import { UserContext, UserProvider } from './UserContext';
 
 function AppContent() {
-  const { user } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
+  const location = useLocation();
 
   return (
     <div className="App">
@@ -34,7 +35,7 @@ function AppContent() {
                   </li>
                 </>
               )}
-              {user && (
+              {user && location.pathname !== '/uo-list' && (
                 <li className="nav-item">
                   <Link className="nav-link" to="/uo-list">Uo List</Link>
                 </li>
