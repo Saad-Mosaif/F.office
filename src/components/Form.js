@@ -18,7 +18,7 @@ const Form = () => {
       intituler: name,
       codeDR: codeDR,
       typeUO: typeUO,
-      cat_uo: catUO,
+      catUo: catUO,
       ville: city,
       department: department,
     };
@@ -78,14 +78,18 @@ const Form = () => {
             </div>
             <div className="mb-3">
               <label htmlFor="catUO" className="form-label">Cat UO</label>
-              <input 
-                type="text" 
+              <select 
                 className="form-control" 
                 id="catUO" 
                 value={catUO} 
-                onChange={(e) => setCatUO(e.target.value)} 
-                placeholder="Cat UO" 
-              />
+                onChange={(e) => setCatUO(e.target.value)}
+              >
+                <option value="">Select Cat UO</option>
+                <option value="DC">DC</option>
+                <option value="DR">DR</option>
+                <option value="CMP">CMP</option>
+                <option value="EFP">EFP</option>
+              </select>
             </div>
             <div className="mb-3">
               <label htmlFor="city" className="form-label">City</label>
