@@ -24,19 +24,19 @@ const Login = () => {
 
     try {
       const response = await login(email, password);
-      setMessage(response.data);
-      const maskedEmail = maskEmail(email); // Mask the email
-      setUser({ email: maskedEmail }); // Set the masked email in the user context
-      navigate('/main'); // Redirect to Mainpg component
+      if (response.data.role) {
+        setUser({ email, role: response.data.role });
+        if (response.data.role === 'ADMIN') {
+          navigate('/main');
+        } else if (response.data.role === 'DIRECTOR') {
+          navigate('/uo-list');
+        }
+      } else {
+        setError(response.data.message);
+      }
     } catch (error) {
       setError('Invalid email or password');
     }
-  };
-
-  const maskEmail = (email) => {
-    const [localPart, domain] = email.split('@');
-    const maskedLocalPart = localPart.substring(0, 2) + '*'.repeat(localPart.length - 2);
-    return `${maskedLocalPart}@${domain}`;
   };
 
   return (

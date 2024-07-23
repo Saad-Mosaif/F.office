@@ -1,34 +1,24 @@
 import React, { useState } from 'react';
-import '../App.css';
-import { register } from '../api';
+import axios from 'axios';
 
 const Register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [error, setError] = useState('');
+  const [role, setRole] = useState('');
   const [message, setMessage] = useState('');
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    setError('');
     setMessage('');
-
-    if (email === '' || password === '' || confirmPassword === '') {
-      setError('All fields are required');
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      setError('Passwords do not match');
-      return;
-    }
-
     try {
-      const response = await register(email, password);
+      const response = await axios.post('http://localhost:8080/api/auth/register', {
+        email,
+        password,
+        role // ensure role is sent in the request
+      });
       setMessage(response.data);
     } catch (error) {
-      setError('Registration failed');
+      setMessage(error.response.data);
     }
   };
 
@@ -60,19 +50,22 @@ const Register = () => {
                 />
               </div>
               <div className="mb-3">
-                <label htmlFor="confirmPassword" className="form-label">Confirm Password</label>
-                <input
-                  type="password"
+                <label htmlFor="role" className="form-label">Role</label>
+                <select
                   className="form-control"
-                  id="confirmPassword"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                />
+                  id="role"
+                  value={role}
+                  onChange={(e) => setRole(e.target.value)}
+                >
+                  <option value="">Select Role</option>
+                  <option value="ADMIN">Admin</option>
+                  <option value="DIRECTOR">Director</option>
+                  <option value="DF">DF</option>
+                </select>
               </div>
-              {error && <div className="text-danger">{error}</div>}
-              {message && <div className="text-success">{message}</div>}
-              <button type="submit" className="btn btn-primary w-100">Register</button>
+              <button type="submit" className="btn btn-primary">Register</button>
             </form>
+            {message && <p className="mt-3">{message}</p>}
           </div>
         </div>
       </div>

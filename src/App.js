@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { BrowserRouter as Router, Route, Routes, Link, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Link, Navigate, useLocation } from 'react-router-dom';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
@@ -12,7 +12,7 @@ import EditUoForm from './components/EditUoForm';
 import { UserContext, UserProvider } from './UserContext';
 
 function AppContent() {
-  const { user, setUser } = useContext(UserContext);
+  const { user, logout } = useContext(UserContext);
   const location = useLocation();
 
   return (
@@ -20,11 +20,11 @@ function AppContent() {
       <nav className="navbar navbar-expand-lg navbar-light bg-light sticky-top">
         <div className="container-fluid">
           <Link className="navbar-brand" to="/">React Auth</Link>
-          <div className="collapse navbar-collapse">
+          <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span className="navbar-toggler-icon"></span>
+          </button>
+          <div className="collapse navbar-collapse" id="navbarNav">
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-              <li className="nav-item">
-                <Link className="nav-link" to="/">Home</Link>
-              </li>
               {!user && (
                 <>
                   <li className="nav-item">
@@ -35,26 +35,36 @@ function AppContent() {
                   </li>
                 </>
               )}
-              {user && location.pathname !== '/uo-list' && (
+              {user && user.role === 'ADMIN' && (
                 <li className="nav-item">
-                  <Link className="nav-link" to="/uo-list">Uo List</Link>
+                  <Link className="nav-link" to="/main">Main</Link>
                 </li>
+              )}
+              {user && user.role === 'DIRECTOR' && (
+                <>
+                  <li className="nav-item">
+                    <Link className="nav-link" to="/uo-list">Uo List</Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link className="nav-link" to="/form">Form</Link>
+                  </li>
+                </>
               )}
             </ul>
             {user && (
-              <button className="btn btn-outline-danger" onClick={() => setUser(null)}>Logout</button>
+              <button className="btn btn-outline-danger" onClick={logout}>Logout</button>
             )}
           </div>
         </div>
       </nav>
       <Routes>
-        <Route path="/" element={user ? <Mainpg /> : <Login />} />
+        <Route path="/" element={user ? (user.role === 'ADMIN' ? <Mainpg /> : <Navigate to="/uo-list" />) : <Login />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/main" element={<Mainpg />} />
+        <Route path="/main" element={user && user.role === 'ADMIN' ? <Mainpg /> : <Navigate to="/" />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/form" element={user ? <Form /> : <Login />} />
-        <Route path="/uo-list" element={user ? <UoList /> : <Login />} />
-        <Route path="/edit-uo/:id" element={user ? <EditUoForm /> : <Login />} />
+        <Route path="/form" element={user ? <Form /> : <Navigate to="/" />} />
+        <Route path="/uo-list" element={user && user.role === 'DIRECTOR' ? <UoList /> : <Navigate to="/" />} />
+        <Route path="/edit-uo/:id" element={user ? <EditUoForm /> : <Navigate to="/" />} />
       </Routes>
     </div>
   );
