@@ -12,9 +12,15 @@ const Register = () => {
     const fetchRoles = async () => {
       try {
         const response = await axios.get('http://localhost:8080/api/roles');
-        setRoles(response.data);
+        const data = response.data;
+
+        console.log('Fetched roles:', data); // Debugging line
+
+        // Set roles based on actual response structure
+        setRoles(Array.isArray(data) ? data : data.roles || []);
       } catch (error) {
         console.error('Error fetching roles:', error);
+        setRoles([]); // Default to an empty array in case of error
       }
     };
 
@@ -28,11 +34,14 @@ const Register = () => {
       const response = await axios.post('http://localhost:8080/api/auth/register', {
         email,
         password,
-        role: { name: role } // ensure role object is sent in the request
+        role: { name: role }
       });
-      setMessage(response.data);
+
+      // Directly set the message based on the response data
+      setMessage(response.data); // The response is a string message
     } catch (error) {
-      setMessage(error.response.data);
+      // Handle error response
+      setMessage(error.response?.data || 'Registration failed'); // Display error message
     }
   };
 
@@ -51,6 +60,7 @@ const Register = () => {
                   id="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  required
                 />
               </div>
               <div className="mb-3">
@@ -61,6 +71,7 @@ const Register = () => {
                   id="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  required
                 />
               </div>
               <div className="mb-3">
@@ -70,11 +81,12 @@ const Register = () => {
                   id="role"
                   value={role}
                   onChange={(e) => setRole(e.target.value)}
+                  required
                 >
                   <option value="">Select Role</option>
-                  {roles.map((role) => (
-                    <option key={role.id} value={role.name}>
-                      {role.name}
+                  {roles.map((r) => (
+                    <option key={r.id} value={r.name}>
+                      {r.name}
                     </option>
                   ))}
                 </select>

@@ -27,7 +27,7 @@ const Login = () => {
         if (response.data.role === 'ADMIN') {
           navigate('/main');
         } else if (response.data.role === 'DIRECTOR') {
-          navigate('/uo-list');
+          navigate('/main');
         }
       } else {
         setError(response.data.message);
