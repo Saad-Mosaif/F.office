@@ -14,7 +14,7 @@ const Mainpg = () => {
       <div className="jumbotron text-center mt-5">
         <h1 className="display-4">Welcome to the Main Page!</h1>
         <p className="lead">
-          {user ? `Hello, ${user.email}!` : 'This is the main page of the application.'}
+          {user ? `Hello, ${user.email}! Your role is ${user.role}.` : 'This is the main page of the application.'}
         </p>
       </div>
       <div className="row justify-content-center">
