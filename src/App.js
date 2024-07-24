@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { BrowserRouter as Router, Route, Routes, Link, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Link, Navigate, useNavigate } from 'react-router-dom';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
@@ -14,6 +14,12 @@ import { UserContext, UserProvider } from './UserContext';
 
 function AppContent() {
   const { user, logout } = useContext(UserContext);
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
   if (!user) {
     return (
@@ -82,15 +88,13 @@ function AppContent() {
                   </li>
                 </>
               )}
-              {(user.role === 'DF' || user.role === 'DIR_CMP') && (
+              {(user.role === 'DF' || user.role === 'DIR_CMP' || user.role === 'SRIO') && (
                 <li className="nav-item">
                   <Link className="nav-link" to="/uo-list">Uo List</Link>
                 </li>
               )}
             </ul>
-            {user && (
-              <button className="btn btn-outline-danger" onClick={logout}>Logout</button>
-            )}
+            <button className="btn btn-outline-danger" onClick={handleLogout}>Logout</button>
           </div>
         </div>
       </nav>
