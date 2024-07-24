@@ -1,11 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const Register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('');
+  const [roles, setRoles] = useState([]);
   const [message, setMessage] = useState('');
+
+  useEffect(() => {
+    const fetchRoles = async () => {
+      try {
+        const response = await axios.get('http://localhost:8080/api/roles');
+        setRoles(response.data);
+      } catch (error) {
+        console.error('Error fetching roles:', error);
+      }
+    };
+
+    fetchRoles();
+  }, []);
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -14,7 +28,7 @@ const Register = () => {
       const response = await axios.post('http://localhost:8080/api/auth/register', {
         email,
         password,
-        role // ensure role is sent in the request
+        role: { name: role } // ensure role object is sent in the request
       });
       setMessage(response.data);
     } catch (error) {
@@ -58,9 +72,11 @@ const Register = () => {
                   onChange={(e) => setRole(e.target.value)}
                 >
                   <option value="">Select Role</option>
-                  <option value="ADMIN">Admin</option>
-                  <option value="DIRECTOR">Director</option>
-                  <option value="DF">DF</option>
+                  {roles.map((role) => (
+                    <option key={role.id} value={role.name}>
+                      {role.name}
+                    </option>
+                  ))}
                 </select>
               </div>
               <button type="submit" className="btn btn-primary">Register</button>

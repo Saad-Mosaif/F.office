@@ -8,14 +8,12 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [message, setMessage] = useState('');
   const { setUser } = useContext(UserContext);
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
-    setMessage('');
 
     if (email === '' || password === '') {
       setError('Email and password are required');
@@ -67,7 +65,6 @@ const Login = () => {
                 />
               </div>
               {error && <div className="text-danger">{error}</div>}
-              {message && <div className="text-success">{message}</div>}
               <button type="submit" className="btn btn-primary w-100">Login</button>
             </form>
           </div>
