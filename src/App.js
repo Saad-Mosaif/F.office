@@ -4,6 +4,7 @@ import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import Mainpg from './components/Mainpg';
+import Mainpage2 from './components/mainpage2';
 import Login from './components/Login';
 import Register from './components/Register';
 import Form from './components/Form';
@@ -14,7 +15,6 @@ import { UserContext, UserProvider } from './UserContext';
 function AppContent() {
   const { user, logout } = useContext(UserContext);
 
-  // Handle the case where `user` might be null
   if (!user) {
     return (
       <div className="App">
@@ -78,7 +78,7 @@ function AppContent() {
                     <Link className="nav-link" to="/uo-list">Uo List</Link>
                   </li>
                   <li className="nav-item">
-                    <Link className="nav-link" to="/form">Form</Link>
+                    <Link className="nav-link" to="/mainpage2">Main</Link>
                   </li>
                 </>
               )}
@@ -95,10 +95,11 @@ function AppContent() {
         </div>
       </nav>
       <Routes>
-        <Route path="/" element={<Navigate to={user.role === 'ADMIN' ? "/main" : "/uo-list"} />} />
-        <Route path="/login" element={user ? <Navigate to={user.role === 'ADMIN' ? "/main" : "/uo-list"} /> : <Login />} />
-        <Route path="/register" element={user ? <Navigate to={user.role === 'ADMIN' ? "/main" : "/uo-list"} /> : <Register />} />
+        <Route path="/" element={<Navigate to={user.role === 'ADMIN' ? "/main" : user.role === 'DIR_EFP' ? "/mainpage2" : "/uo-list"} />} />
+        <Route path="/login" element={user ? <Navigate to={user.role === 'ADMIN' ? "/main" : user.role === 'DIR_EFP' ? "/mainpage2" : "/uo-list"} /> : <Login />} />
+        <Route path="/register" element={user ? <Navigate to={user.role === 'ADMIN' ? "/main" : user.role === 'DIR_EFP' ? "/mainpage2" : "/uo-list"} /> : <Register />} />
         <Route path="/main" element={user.role === 'ADMIN' ? <Mainpg /> : <Navigate to="/" />} />
+        <Route path="/mainpage2" element={user.role === 'DIR_EFP' ? <Mainpage2 /> : <Navigate to="/" />} />
         <Route path="/form" element={(user.role === 'ADMIN' || user.role === 'DIR_EFP') ? <Form /> : <Navigate to="/" />} />
         <Route path="/uo-list" element={<UoList />} />
         <Route path="/edit-uo/:id" element={(user.role === 'ADMIN' || user.role === 'DIR_EFP') ? <EditUoForm /> : <Navigate to="/" />} />
