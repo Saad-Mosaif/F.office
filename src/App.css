@@ -1,3 +1,8 @@
+/* Additional style to slide the form down */
+.slide-down {
+    margin-top: 50px; /* Adjust this value as needed to slide the form down */
+}
+
 /* General styles */
 body {
     font-family: 'Arial', sans-serif;
@@ -9,15 +14,15 @@ body {
     flex-direction: column;
     justify-content: center;
 }
+
 .card-hover {
     transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-  }
-  
-  .card-hover:hover {
+}
+
+.card-hover:hover {
     transform: scale(1.05);
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-  }
-  
+}
 
 /* Sticky navbar styles */
 .sticky-top {
@@ -70,11 +75,42 @@ body {
     margin-bottom: 1.5rem;
     font-weight: 600;
     font-size: 1.75rem;
+    text-align: center;
 }
 
 .card-text {
     font-size: 1rem;
     margin-bottom: 1.5rem;
+}
+
+/* Form styles specific to FormAjout */
+form {
+    width: 100%;
+}
+
+.form-label {
+    font-weight: 500;
+    font-size: 1rem;
+}
+
+.form-control {
+    border-radius: 0.25rem;
+    margin-bottom: 1rem;
+    box-shadow: none;
+}
+
+.form-control:read-only {
+    background-color: #e9ecef;
+}
+
+.btn-success {
+    background-color: #405D45;
+    border-color: #405D45;
+}
+
+.btn-success:hover {
+    background-color: #324b38;
+    border-color: #324b38;
 }
 
 /* Button styles */

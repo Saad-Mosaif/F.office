@@ -4,12 +4,14 @@ import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import Mainpg from './components/Mainpg';
-import Mainpage2 from './components/mainpage2';
+import Mainpage2 from './components/Mainpage2';
 import Login from './components/Login';
 import Register from './components/Register';
 import Form from './components/Form';
 import UoList from './components/UoList';
 import EditUoForm from './components/EditUoForm';
+import FormAjout from './components/FormAjout';
+import Card from './components/Card';  // Import the Card component
 import { UserContext, UserProvider } from './UserContext';
 
 function AppContent() {
@@ -76,6 +78,12 @@ function AppContent() {
                   <li className="nav-item">
                     <Link className="nav-link" to="/form">Form</Link>
                   </li>
+                  <li className="nav-item">
+                    <Link className="nav-link" to="/form-ajout">Ajouter Form</Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link className="nav-link" to="/card">Card</Link>
+                  </li>
                 </>
               )}
               {user.role === 'DIR_EFP' && (
@@ -85,6 +93,12 @@ function AppContent() {
                   </li>
                   <li className="nav-item">
                     <Link className="nav-link" to="/mainpage2">Main</Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link className="nav-link" to="/form-ajout">Ajouter Form</Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link className="nav-link" to="/card">Card</Link>
                   </li>
                 </>
               )}
@@ -107,6 +121,8 @@ function AppContent() {
         <Route path="/form" element={(user.role === 'ADMIN' || user.role === 'DIR_EFP') ? <Form /> : <Navigate to="/" />} />
         <Route path="/uo-list" element={<UoList />} />
         <Route path="/edit-uo/:id" element={(user.role === 'ADMIN' || user.role === 'DIR_EFP') ? <EditUoForm /> : <Navigate to="/" />} />
+        <Route path="/form-ajout" element={(user.role === 'ADMIN' || user.role === 'DIR_EFP') ? <FormAjout /> : <Navigate to="/" />} />
+        <Route path="/card" element={(user.role === 'ADMIN' || user.role === 'DIR_EFP') ? <Card /> : <Navigate to="/" />} />
       </Routes>
     </div>
   );
