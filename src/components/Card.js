@@ -18,7 +18,7 @@ const API_URLS = {
   filieres: 'http://localhost:8080/api/filieres',
 };
 
-const fetchData = async (setters) => {
+const fetchData = async (setters, selectedCriteria) => {
   const { setTypeFormations, setNiveauFormations, setAnneeFormations, setModeFormations, setFilieres, setError, setLoading } = setters;
 
   try {
@@ -27,20 +27,24 @@ const fetchData = async (setters) => {
       { data: niveauFormationsData },
       { data: anneeFormationsData },
       { data: modeFormationsData },
-      { data: filieresData },
     ] = await Promise.all([
       axios.get(API_URLS.typeFormations),
       axios.get(API_URLS.niveauFormations),
       axios.get(API_URLS.anneeFormations),
       axios.get(API_URLS.modeFormations),
-      axios.get(API_URLS.filieres),
     ]);
 
     setTypeFormations(typeFormationsData);
     setNiveauFormations(niveauFormationsData);
     setAnneeFormations(anneeFormationsData);
     setModeFormations(modeFormationsData);
+
+    // Fetch filieres based on selected criteria
+    const { data: filieresData } = await axios.get(API_URLS.filieres, {
+      params: selectedCriteria
+    });
     setFilieres(filieresData);
+
   } catch (error) {
     setError('Error fetching data.');
     console.error('Error fetching data:', error);
@@ -59,6 +63,12 @@ const Card = () => {
   const [error, setError] = useState(null);
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(10);
+  const [selectedCriteria, setSelectedCriteria] = useState({
+    modeFormationId: null,
+    typeFormationId: null,
+    niveauFormationId: null,
+    anneeFormationId: null
+  });
 
   useEffect(() => {
     fetchData({
@@ -69,8 +79,16 @@ const Card = () => {
       setFilieres,
       setError,
       setLoading,
-    });
-  }, []);
+    }, selectedCriteria);
+  }, [selectedCriteria]);
+
+  const handleSelectionChange = (e) => {
+    const { id, value } = e.target;
+    setSelectedCriteria(prevCriteria => ({
+      ...prevCriteria,
+      [`${id}Id`]: value
+    }));
+  };
 
   if (loading) {
     return <div>Loading...</div>;
@@ -82,7 +100,7 @@ const Card = () => {
 
   return (
     <div className="container wider-container mt-5">
-      <div className="jumbotron  p-5 rounded mb-4" style={{marginTop:'1000px', backgroundColor:'#405D45'}}>
+      <div className="jumbotron p-5 rounded mb-4" style={{marginTop:'1000px', backgroundColor:'#405D45'}}>
         <h1 className="display-4">Gestion de la carte de l’établissement X</h1>
       </div>
       <div className="table-container">
@@ -96,7 +114,8 @@ const Card = () => {
             ].map(({ label, id, options }, index) => (
               <div className="col-md-4" key={index}>
                 <label htmlFor={id} className="form-label">{label}:</label>
-                <select className="form-control" id={id}>
+                <select className="form-control" id={id} onChange={handleSelectionChange}>
+                  <option value="">Select</option>
                   {options.map(option => (
                     <option key={option.id} value={option.id}>{option.name}</option>
                   ))}
@@ -107,24 +126,22 @@ const Card = () => {
         </form>
         <h2 className="table-title">Résultats</h2>
         <div className="table-responsive">
-                <div className="table">
-                    <div className="table-header-background">
-        <DataTable value={filieres} paginator rows={rows} first={first} onPage={(e) => setFirst(e.first)} rowsPerPageOptions={[10, 20, 50]}>
-          <Column field="codeFil" header="Code Filière"></Column>
-          <Column field="intituler" header="Libellé Filière"></Column>
-          <Column field="effectif" header="Effectif" body={(rowData) => rowData.effectif ?? 'N/A'}></Column>
-          <Column field="datePrevueDemarrage" header="Date Prévue de Démarrage" body={(rowData) => rowData.datePrevueDemarrage ?? 'N/A'}></Column>
-          <Column header="Action" body={(rowData) => (<><a href="#modifier">Modifier</a> | <a href="#supprimer">Supprimer</a></>)}></Column>
-          <Column field="statut" header="Statut" body={() => 'Ajoutée'}></Column>
-        </DataTable>
-        </div></div></div>
+          <div className="table">
+            <div className="table-header-background">
+              <DataTable value={filieres} paginator rows={rows} first={first} onPage={(e) => setFirst(e.first)} rowsPerPageOptions={[10, 20, 50]}>
+                <Column field="codeFil" header="Code Filière"></Column>
+                <Column field="intituler" header="Libellé Filière"></Column>
+                <Column field="effectif" header="Effectif" body={(rowData) => rowData.effectif ?? 'N/A'}></Column>
+                <Column field="datePrevueDemarrage" header="Date Prévue de Démarrage" body={(rowData) => rowData.datePrevueDemarrage ?? 'N/A'}></Column>
+                <Column header="Action" body={(rowData) => (<><a href="#modifier">Modifier</a> | <a href="#supprimer">Supprimer</a></>)}></Column>
+                <Column field="statut" header="Statut" body={() => 'Ajoutée'}></Column>
+              </DataTable>
+            </div>
+          </div>
+        </div>
         <div className="d-flex justify-content-between mt-4">
           <button className="btn btn-success">Enregistrer</button>
-          <button className="btn btn-primary">Valider</button>
-        </div>
-        <div className="mt-2">
-          <p><strong>Enregistrer:</strong> Vous permet de sauvegarder les modifications et de continuer à les modifier à tout moment avant la validation définitive.</p>
-          <p><strong>Valider:</strong> Une fois validé, les modifications sont définitives et ne peuvent plus être modifiées.</p>
+          <Paginator first={first} rows={rows} totalRecords={filieres.length} onPageChange={(e) => setFirst(e.first)} />
         </div>
       </div>
     </div>
