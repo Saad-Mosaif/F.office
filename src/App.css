@@ -52,7 +52,7 @@ body {
 
 /* Jumbotron styles */
 .jumbotron {
-    background-color: #405D45;
+    background-color: #405D45 !important; 
     color: white;
     border-radius: 0.5rem;
     padding: 2rem 1rem;
@@ -195,4 +195,26 @@ form {
     margin: 0 0 20px 0;
     text-align: center;
     font-size: 24px;
+}
+.title-background {
+    background-color: #324b38; /* Adjust the shade of green as needed */
+    padding: 10px; /* Optional: add padding for better appearance */
+    color: white; /* Optional: ensure the text color is readable */
+    text-align: center; /* Center align the text */
+}
+
+/* Table headers background color */
+.table-header-background {
+    background-color: #324b38; /* Adjust the shade of green as needed */
+    color: white; /* Ensure the text color is readable */
+    text-align: center; /* Center align the text */
+}
+
+/* Additional margin for the Save and Validate buttons */
+.d-flex.justify-content-between.mt-4 button {
+    margin: 0 5px; /* Adjust the space between buttons */
+}
+
+.d-flex.justify-content-between.mt-4 {
+    justify-content: center;
 }

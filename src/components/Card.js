@@ -82,7 +82,7 @@ const Card = () => {
 
   return (
     <div className="container wider-container mt-5">
-      <div className="jumbotron bg-light p-5 rounded mb-4">
+      <div className="jumbotron  p-5 rounded mb-4" style={{marginTop:'1000px', backgroundColor:'#405D45'}}>
         <h1 className="display-4">Gestion de la carte de l’établissement X</h1>
       </div>
       <div className="table-container">
@@ -106,6 +106,9 @@ const Card = () => {
           </div>
         </form>
         <h2 className="table-title">Résultats</h2>
+        <div className="table-responsive">
+                <div className="table">
+                    <div className="table-header-background">
         <DataTable value={filieres} paginator rows={rows} first={first} onPage={(e) => setFirst(e.first)} rowsPerPageOptions={[10, 20, 50]}>
           <Column field="codeFil" header="Code Filière"></Column>
           <Column field="intituler" header="Libellé Filière"></Column>
@@ -114,6 +117,7 @@ const Card = () => {
           <Column header="Action" body={(rowData) => (<><a href="#modifier">Modifier</a> | <a href="#supprimer">Supprimer</a></>)}></Column>
           <Column field="statut" header="Statut" body={() => 'Ajoutée'}></Column>
         </DataTable>
+        </div></div></div>
         <div className="d-flex justify-content-between mt-4">
           <button className="btn btn-success">Enregistrer</button>
           <button className="btn btn-primary">Valider</button>
