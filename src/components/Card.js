@@ -17,10 +17,11 @@ const API_URLS = {
   anneeFormations: 'http://localhost:8080/api/reference-data/annee-formations',
   modeFormations: 'http://localhost:8080/api/reference-data/mode-formations',
   filieres: 'http://localhost:8080/api/filieres',
+  cards: 'http://localhost:8080/api/cards/search',
 };
 
 const fetchData = async (setters, selectedCriteria) => {
-  const { setTypeFormations, setNiveauFormations, setAnneeFormations, setModeFormations, setFilieres, setError, setLoading } = setters;
+  const { setTypeFormations, setNiveauFormations, setAnneeFormations, setModeFormations, setData, setError, setLoading } = setters;
 
   try {
     const [
@@ -28,11 +29,15 @@ const fetchData = async (setters, selectedCriteria) => {
       { data: niveauFormationsData },
       { data: anneeFormationsData },
       { data: modeFormationsData },
+      { data: filieresData },
+      { data: cardsData }
     ] = await Promise.all([
       axios.get(API_URLS.typeFormations),
       axios.get(API_URLS.niveauFormations),
       axios.get(API_URLS.anneeFormations),
       axios.get(API_URLS.modeFormations),
+      axios.get(API_URLS.filieres, { params: selectedCriteria }),
+      axios.get(API_URLS.cards, { params: selectedCriteria })
     ]);
 
     setTypeFormations(typeFormationsData);
@@ -40,11 +45,10 @@ const fetchData = async (setters, selectedCriteria) => {
     setAnneeFormations(anneeFormationsData);
     setModeFormations(modeFormationsData);
 
-    // Fetch filieres based on selected criteria
-    const { data: filieresData } = await axios.get(API_URLS.filieres, {
-      params: selectedCriteria
-    });
-    setFilieres(filieresData);
+    setData([
+      ...filieresData.map(item => ({ ...item, entityType: 'Filiere' })),
+      ...cardsData.map(item => ({ ...item, entityType: 'Card' }))
+    ]);
 
   } catch (error) {
     setError('Error fetching data.');
@@ -59,7 +63,7 @@ const Card = () => {
   const [niveauFormations, setNiveauFormations] = useState([]);
   const [anneeFormations, setAnneeFormations] = useState([]);
   const [modeFormations, setModeFormations] = useState([]);
-  const [filieres, setFilieres] = useState([]);
+  const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [first, setFirst] = useState(0);
@@ -79,7 +83,7 @@ const Card = () => {
       setNiveauFormations,
       setAnneeFormations,
       setModeFormations,
-      setFilieres,
+      setData,
       setError,
       setLoading,
     }, selectedCriteria);
@@ -92,27 +96,25 @@ const Card = () => {
       [`${id}Id`]: value
     }));
   };
-  
-  const handleAjouterClick = (rowData) => {
-    console.log(rowData)
-    // Extract filiereId and other necessary information
-    const selectedCriteriaForCard = {
-      codeFiliere: rowData.codeFil,
-      filiere: rowData.intituler,
-      niveauFormation: rowData.niveauFormation?.name || '',
-      typeFormation: rowData.typeFormation?.name || '',
-      modeFormation: rowData.modeFormation?.name || '',
-      anneeFormation: rowData.anneeFormation?.name || '',
-      filiereId: rowData.id, // Ensure this value is correct
-    };
-  
-    // Log the selected criteria for debugging
-    console.log("Selected criteria for card:", selectedCriteriaForCard);
-  
-    // Navigate to FormAjout with the state including filiereId
-    navigate('/form-ajout', { state: selectedCriteriaForCard });
+
+  const handleActionClick = (rowData, action) => {
+    console.log(rowData, action);
+    if (action === 'Ajouter') {
+      const selectedCriteriaForCard = {
+        codeFiliere: rowData.codeFil,
+        filiere: rowData.intituler,
+        niveauFormation: rowData.niveauFormation?.name || '',
+        typeFormation: rowData.typeFormation?.name || '',
+        modeFormation: rowData.modeFormation?.name || '',
+        anneeFormation: rowData.anneeFormation?.name || '',
+        filiereId: rowData.id,
+      };
+
+      navigate('/form-ajout', { state: selectedCriteriaForCard });
+    }
+    // Implement other actions based on the value of `action`
   };
-  
+
   return (
     <div className="container wider-container mt-5">
       <div className="jumbotron p-5 rounded mb-4" style={{ marginTop: '1000px', backgroundColor: '#405D45' }}>
@@ -143,25 +145,35 @@ const Card = () => {
         <div className="table-responsive">
           <div className="table">
             <div className="table-header-background">
-              <DataTable value={filieres} paginator rows={rows} first={first} onPage={(e) => setFirst(e.first)} rowsPerPageOptions={[10, 20, 50]}>
+              <DataTable value={data} paginator rows={rows} first={first} onPage={(e) => setFirst(e.first)} rowsPerPageOptions={[10, 20, 50]}>
                 <Column field="codeFil" header="Code Filière"></Column>
                 <Column field="intituler" header="Libellé Filière"></Column>
                 <Column field="effectif" header="Effectif" body={(rowData) => rowData.effectif ?? 'N/A'}></Column>
                 <Column field="datePrevueDemarrage" header="Date Prévue de Démarrage" body={(rowData) => rowData.datePrevueDemarrage ?? 'N/A'}></Column>
+                <Column field="statut" header="Statut" body={(rowData) => rowData.statut ?? 'N/A'}></Column>
                 <Column
                   header="Action"
                   body={(rowData) => (
-                    <a href="#" onClick={() => handleAjouterClick(rowData)}>Ajouter</a>
+                    <>
+                      {rowData.entityType === 'Filiere' && (
+                        <a href="#" onClick={() => handleActionClick(rowData, 'Ajouter')}>Ajouter</a>
+                      )}
+                      {rowData.entityType === 'Card' && (
+                        <>
+                          <a href="#" onClick={() => handleActionClick(rowData, 'Modifier')}>Modifier</a> | 
+                          <a href="#" onClick={() => handleActionClick(rowData, 'Supprimer')}>Supprimer</a>
+                        </>
+                      )}
+                    </>
                   )}
                 ></Column>
-                <Column field="statut" header="Statut" body={() => null}></Column>
               </DataTable>
             </div>
           </div>
         </div>
         <div className="d-flex justify-content-between mt-4">
           <button className="btn btn-success">Enregistrer</button>
-          <Paginator first={first} rows={rows} totalRecords={filieres.length} onPageChange={(e) => setFirst(e.first)} />
+          <Paginator first={first} rows={rows} totalRecords={data.length} onPageChange={(e) => setFirst(e.first)} />
         </div>
       </div>
     </div>
