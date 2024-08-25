@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'primereact/resources/themes/saga-blue/theme.css';
@@ -16,7 +15,6 @@ const API_URLS = {
   niveauFormations: 'http://localhost:8080/api/reference-data/niveau-formations',
   anneeFormations: 'http://localhost:8080/api/reference-data/annee-formations',
   modeFormations: 'http://localhost:8080/api/reference-data/mode-formations',
-  filieres: 'http://localhost:8080/api/filieres',
   cards: 'http://localhost:8080/api/cards/search',
 };
 
@@ -29,14 +27,12 @@ const fetchData = async (setters, selectedCriteria) => {
       { data: niveauFormationsData },
       { data: anneeFormationsData },
       { data: modeFormationsData },
-      { data: filieresData },
       { data: cardsData }
     ] = await Promise.all([
       axios.get(API_URLS.typeFormations),
       axios.get(API_URLS.niveauFormations),
       axios.get(API_URLS.anneeFormations),
       axios.get(API_URLS.modeFormations),
-      axios.get(API_URLS.filieres, { params: selectedCriteria }),
       axios.get(API_URLS.cards, { params: selectedCriteria })
     ]);
 
@@ -44,11 +40,7 @@ const fetchData = async (setters, selectedCriteria) => {
     setNiveauFormations(niveauFormationsData);
     setAnneeFormations(anneeFormationsData);
     setModeFormations(modeFormationsData);
-
-    setData([
-      ...filieresData.map(item => ({ ...item, entityType: 'Filiere' })),
-      ...cardsData.map(item => ({ ...item, entityType: 'Card' }))
-    ]);
+    setData(cardsData);
 
   } catch (error) {
     setError('Error fetching data.');
@@ -58,7 +50,7 @@ const fetchData = async (setters, selectedCriteria) => {
   }
 };
 
-const Card = () => {
+const ValidCard = () => {
   const [typeFormations, setTypeFormations] = useState([]);
   const [niveauFormations, setNiveauFormations] = useState([]);
   const [anneeFormations, setAnneeFormations] = useState([]);
@@ -74,8 +66,6 @@ const Card = () => {
     niveauFormationId: null,
     anneeFormationId: null
   });
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     fetchData({
@@ -97,28 +87,10 @@ const Card = () => {
     }));
   };
 
-  const handleActionClick = (rowData, action) => {
-    console.log(rowData, action);
-    if (action === 'Ajouter') {
-      const selectedCriteriaForCard = {
-        codeFiliere: rowData.codeFil,
-        filiere: rowData.intituler,
-        niveauFormation: rowData.niveauFormation?.name || '',
-        typeFormation: rowData.typeFormation?.name || '',
-        modeFormation: rowData.modeFormation?.name || '',
-        anneeFormation: rowData.anneeFormation?.name || '',
-        filiereId: rowData.id,
-      };
-
-      navigate('/form-ajout', { state: selectedCriteriaForCard });
-    }
-    // Implement other actions based on the value of `action`
-  };
-
   return (
     <div className="container wider-container mt-5">
-      <div className="jumbotron p-5 rounded mb-4" style={{ marginTop: '1000px', backgroundColor: '#405D45' }}>
-        <h1 className="display-4">Gestion de la carte de l’établissement X</h1>
+      <div className="jumbotron p-5 rounded mb-4" style={{ backgroundColor: '#405D45' }}>
+        <h1 className="display-4">Validation des Cartes</h1>
       </div>
       <div className="table-container">
         <form>
@@ -129,7 +101,7 @@ const Card = () => {
               { label: 'Année de formation', id: 'anneeFormation', options: anneeFormations },
               { label: 'Mode de formation', id: 'modeFormation', options: modeFormations },
             ].map(({ label, id, options }, index) => (
-              <div className="col-md-4" key={index}>
+              <div className="col-md-3" key={index}>
                 <label htmlFor={id} className="form-label">{label}:</label>
                 <select className="form-control" id={id} onChange={handleSelectionChange}>
                   <option value="">Select</option>
@@ -147,24 +119,16 @@ const Card = () => {
             <div className="table-header-background">
               <DataTable value={data} paginator rows={rows} first={first} onPage={(e) => setFirst(e.first)} rowsPerPageOptions={[10, 20, 50]}>
                 <Column field="codeFil" header="Code Filière"></Column>
-                <Column field="intituler" header="Libellé Filière"></Column>
-                <Column field="effectif" header="Effectif" body={(rowData) => rowData.effectif ?? 'N/A'}></Column>
-                <Column field="datePrevueDemarrage" header="Date Prévue de Démarrage" body={(rowData) => rowData.datePrevueDemarrage ?? 'N/A'}></Column>
-                <Column field="statut" header="Statut" body={(rowData) => rowData.statut ?? 'N/A'}></Column>
+                <Column field="intituler" header="Filière"></Column>
+                <Column field="effectif" header="Effectif Prévu"></Column>
+                <Column field="datePrevueDemarrage" header="Date Prévue de Démarrage"></Column>
                 <Column
                   header="Action"
                   body={(rowData) => (
-                    <>
-                      {rowData.entityType === 'Filiere' && (
-                        <a href="#" onClick={() => handleActionClick(rowData, 'Ajouter')}>Ajouter</a>
-                      )}
-                      {rowData.entityType === 'Card' && (
-                        <>
-                          <a href="#" onClick={() => handleActionClick(rowData, 'Modifier')}>Modifier</a> | 
-                          <a href="#" onClick={() => handleActionClick(rowData, 'Supprimer')}>Supprimer</a>
-                        </>
-                      )}
-                    </>
+                    <div className="action-buttons">
+                      <button className="btn btn-success">Valider</button>
+                      <button className="btn btn-danger ml-2">Rejeter</button>
+                    </div>
                   )}
                 ></Column>
               </DataTable>
@@ -172,11 +136,11 @@ const Card = () => {
           </div>
         </div>
         <div className="d-flex justify-content-between mt-4">
-          <button className="btn btn-success">Enregistrer</button>
+          <Paginator first={first} rows={rows} totalRecords={data.length} onPageChange={(e) => setFirst(e.first)} />
         </div>
       </div>
     </div>
   );
 };
 
-export default Card;
+export default ValidCard;

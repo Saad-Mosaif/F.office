@@ -11,7 +11,8 @@ import Form from './components/Form';
 import UoList from './components/UoList';
 import EditUoForm from './components/EditUoForm';
 import FormAjout from './components/FormAjout';
-import Card from './components/Card';  // Import the Card component
+import Card from './components/Card';
+import ValidCard from './components/ValidCard'; // Import the ValidCard component
 import { UserContext, UserProvider } from './UserContext';
 
 function AppContent() {
@@ -84,6 +85,9 @@ function AppContent() {
                   <li className="nav-item">
                     <Link className="nav-link" to="/card">Card</Link>
                   </li>
+                  <li className="nav-item">
+                    <Link className="nav-link" to="/validcard">Valid Card</Link> {/* Added ValidCard link */}
+                  </li>
                 </>
               )}
               {user.role === 'DIR_EFP' && (
@@ -104,7 +108,7 @@ function AppContent() {
               )}
               {(user.role === 'DF' || user.role === 'DIR_CMP' || user.role === 'SRIO') && (
                 <li className="nav-item">
-                  <Link className="nav-link" to="/uo-list">Uo List</Link>
+                  <Link className="nav-link" to="/validcard">Valid Card</Link> {/* Added ValidCard link */}
                 </li>
               )}
             </ul>
@@ -113,16 +117,17 @@ function AppContent() {
         </div>
       </nav>
       <Routes>
-        <Route path="/" element={<Navigate to={user.role === 'ADMIN' ? "/main" : user.role === 'DIR_EFP' ? "/mainpage2" : "/uo-list"} />} />
-        <Route path="/login" element={user ? <Navigate to={user.role === 'ADMIN' ? "/main" : user.role === 'DIR_EFP' ? "/mainpage2" : "/uo-list"} /> : <Login />} />
-        <Route path="/register" element={user ? <Navigate to={user.role === 'ADMIN' ? "/main" : user.role === 'DIR_EFP' ? "/mainpage2" : "/uo-list"} /> : <Register />} />
+        <Route path="/" element={<Navigate to={user.role === 'ADMIN' ? "/main" : user.role === 'DIR_EFP' ? "/mainpage2" : "/validcard"} />} />
+        <Route path="/login" element={user ? <Navigate to={user.role === 'ADMIN' ? "/main" : user.role === 'DIR_EFP' ? "/mainpage2" : "/validcard"} /> : <Login />} />
+        <Route path="/register" element={user ? <Navigate to={user.role === 'ADMIN' ? "/main" : user.role === 'DIR_EFP' ? "/mainpage2" : "/validcard"} /> : <Register />} />
         <Route path="/main" element={user.role === 'ADMIN' ? <Mainpg /> : <Navigate to="/" />} />
         <Route path="/mainpage2" element={user.role === 'DIR_EFP' ? <Mainpage2 /> : <Navigate to="/" />} />
         <Route path="/form" element={(user.role === 'ADMIN' || user.role === 'DIR_EFP') ? <Form /> : <Navigate to="/" />} />
-        <Route path="/uo-list" element={<UoList />} />
+        <Route path="/uo-list" element={(user.role === 'ADMIN' || user.role === 'DIR_EFP') ? <UoList /> : <Navigate to="/" />} />
         <Route path="/edit-uo/:id" element={(user.role === 'ADMIN' || user.role === 'DIR_EFP') ? <EditUoForm /> : <Navigate to="/" />} />
         <Route path="/form-ajout" element={(user.role === 'ADMIN' || user.role === 'DIR_EFP') ? <FormAjout /> : <Navigate to="/" />} />
         <Route path="/card" element={(user.role === 'ADMIN' || user.role === 'DIR_EFP') ? <Card /> : <Navigate to="/" />} />
+        <Route path="/validcard" element={(user.role === 'ADMIN' || user.role === 'DF' || user.role === 'DIR_CMP' || user.role === 'SRIO') ? <ValidCard /> : <Navigate to="/" />} /> {/* Added ValidCard route */}
       </Routes>
     </div>
   );
