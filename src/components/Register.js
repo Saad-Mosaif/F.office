@@ -2,47 +2,44 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const Register = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [role, setRole] = useState('');
-  const [roles, setRoles] = useState([]);
-  const [message, setMessage] = useState('');
+  const [typeUOs, setTypeUOs] = useState([]); // For storing TypeUO options
+  const [selectedTypeUO, setSelectedTypeUO] = useState(''); // Selected TypeUO
+  const [uniteOrganisations, setUniteOrganisations] = useState([]); // For storing UOs
+  const [selectedUniteOrganisation, setSelectedUniteOrganisation] = useState('');
 
   useEffect(() => {
-    const fetchRoles = async () => {
+    const fetchTypeUOs = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/api/roles');
-        const data = response.data;
-
-        console.log('Fetched roles:', data); // Debugging line
-
-        // Set roles based on actual response structure
-        setRoles(Array.isArray(data) ? data : data.roles || []);
+        const response = await axios.get('http://localhost:8080/api/unite-organisations/types');
+        setTypeUOs(response.data);
       } catch (error) {
-        console.error('Error fetching roles:', error);
-        setRoles([]); // Default to an empty array in case of error
+        console.error('Error fetching TypeUOs:', error);
       }
     };
 
-    fetchRoles();
+    fetchTypeUOs();
   }, []);
+
+  useEffect(() => {
+    if (selectedTypeUO) {
+      const fetchUniteOrganisations = async () => {
+        try {
+          const response = await axios.get(`http://localhost:8080/api/unite-organisations/by-type/${selectedTypeUO}`);
+          setUniteOrganisations(response.data);
+        } catch (error) {
+          console.error('Error fetching UniteOrganisations:', error);
+        }
+      };
+
+      fetchUniteOrganisations();
+    } else {
+      setUniteOrganisations([]); // Clear the list if no type is selected
+    }
+  }, [selectedTypeUO]);
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    setMessage('');
-    try {
-      const response = await axios.post('http://localhost:8080/api/auth/register', {
-        email,
-        password,
-        role: { name: role }
-      });
-
-      // Directly set the message based on the response data
-      setMessage(response.data); // The response is a string message
-    } catch (error) {
-      // Handle error response
-      setMessage(error.response?.data || 'Registration failed'); // Display error message
-    }
+    // Handle registration logic here
   };
 
   return (
@@ -53,47 +50,42 @@ const Register = () => {
             <h3 className="card-title text-center">Register</h3>
             <form onSubmit={handleRegister}>
               <div className="mb-3">
-                <label htmlFor="email" className="form-label">Email address</label>
-                <input
-                  type="email"
-                  className="form-control"
-                  id="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="mb-3">
-                <label htmlFor="password" className="form-label">Password</label>
-                <input
-                  type="password"
-                  className="form-control"
-                  id="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="mb-3">
-                <label htmlFor="role" className="form-label">Role</label>
+                <label htmlFor="typeUO" className="form-label">Type of Unite Organisation</label>
                 <select
                   className="form-control"
-                  id="role"
-                  value={role}
-                  onChange={(e) => setRole(e.target.value)}
+                  id="typeUO"
+                  value={selectedTypeUO}
+                  onChange={(e) => setSelectedTypeUO(e.target.value)}
                   required
                 >
-                  <option value="">Select Role</option>
-                  {roles.map((r) => (
-                    <option key={r.id} value={r.name}>
-                      {r.name}
+                  <option value="">Select TypeUO</option>
+                  {typeUOs.map((t) => (
+                    <option key={t.id} value={t.id}>
+                      {t.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="mb-3">
+                <label htmlFor="uniteOrganisation" className="form-label">Unite Organisation</label>
+                <select
+                  className="form-control"
+                  id="uniteOrganisation"
+                  value={selectedUniteOrganisation}
+                  onChange={(e) => setSelectedUniteOrganisation(e.target.value)}
+                  required
+                  disabled={!selectedTypeUO} // Disable this field until a TypeUO is selected
+                >
+                  <option value="">Select Unite Organisation</option>
+                  {uniteOrganisations.map((uo) => (
+                    <option key={uo.id} value={uo.id}>
+                      {uo.libelleuo}
                     </option>
                   ))}
                 </select>
               </div>
               <button type="submit" className="btn btn-primary">Register</button>
             </form>
-            {message && <p className="mt-3">{message}</p>}
           </div>
         </div>
       </div>
