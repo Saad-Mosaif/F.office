@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -7,6 +6,12 @@ const Register = () => {
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('');
   const [roles, setRoles] = useState([]);
+  const [drs, setDrs] = useState([]);
+  const [cmps, setCmps] = useState([]);
+  const [efps, setEfps] = useState([]);
+  const [selectedDr, setSelectedDr] = useState('');
+  const [selectedCmp, setSelectedCmp] = useState('');
+  const [selectedEfp, setSelectedEfp] = useState('');
   const [message, setMessage] = useState('');
 
   useEffect(() => {
@@ -14,39 +19,82 @@ const Register = () => {
       try {
         const response = await axios.get('http://localhost:8080/api/roles');
         setRoles(response.data);
-        const data = response.data;
-
-        console.log('Fetched roles:', data); // Debugging line
-
-        // Set roles based on actual response structure
-        setRoles(Array.isArray(data) ? data : data.roles || []);
       } catch (error) {
         console.error('Error fetching roles:', error);
         setRoles([]); // Default to an empty array in case of error
       }
     };
 
+    const fetchDrs = async () => {
+      try {
+        const response = await axios.get('http://localhost:8080/api/unite-organisations/dr');
+        setDrs(response.data);
+      } catch (error) {
+        console.error('Error fetching DRs:', error);
+        setDrs([]); // Default to an empty array in case of error
+      }
+    };
+
     fetchRoles();
+    fetchDrs();
   }, []);
+
+  const handleDrChange = async (e) => {
+    const drId = e.target.value;
+    setSelectedDr(drId);
+    setSelectedCmp('');
+    setSelectedEfp('');
+    setCmps([]);
+    setEfps([]);
+
+    if (drId) {
+      try {
+        const response = await axios.get(`http://localhost:8080/api/unite-organisations/cmp/by-dr/${drId}`);
+        setCmps(response.data);
+      } catch (error) {
+        console.error('Error fetching CMPs:', error);
+      }
+    }
+  };
+
+  const handleCmpChange = async (e) => {
+    const cmpId = e.target.value;
+    setSelectedCmp(cmpId);
+    setSelectedEfp('');
+    setEfps([]);
+
+    if (cmpId) {
+      try {
+        const response = await axios.get(`http://localhost:8080/api/unite-organisations/efp/by-cmp/${cmpId}`);
+        setEfps(response.data);
+      } catch (error) {
+        console.error('Error fetching EFPs:', error);
+      }
+    }
+  };
 
   const handleRegister = async (e) => {
     e.preventDefault();
     setMessage('');
     try {
-      const response = await axios.post('http://localhost:8080/api/auth/register', {
-        email,
-        password,
-       
-        role: { name: role }
-      });
-     
+      const response = await axios.post(
+        'http://localhost:8080/api/auth/register',
+        {
+          email,
+          password,
+          role: { name: role },
+          uniteOrganisation: { id: selectedEfp } // Assuming you're registering with the EFP selected
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
 
-      // Directly set the message based on the response data
       setMessage(response.data); // The response is a string message
     } catch (error) {
-      setMessage(error.response.data);
-      // Handle error response
-      setMessage(error.response?.data || 'Registration failed'); // Display error message
+      setMessage(error.response?.data || 'Registration failed');
     }
   };
 
@@ -89,14 +137,64 @@ const Register = () => {
                   required
                 >
                   <option value="">Select Role</option>
-                 
                   {roles.map((r) => (
                     <option key={r.id} value={r.name}>
                       {r.name}
                     </option>
                   ))}
                 </select>
-                </div>
+              </div>
+              <div className="mb-3">
+                <label htmlFor="dr" className="form-label">Direction Régionale (DR)</label>
+                <select
+                  className="form-control"
+                  id="dr"
+                  value={selectedDr}
+                  onChange={handleDrChange}
+                  required
+                >
+                  <option value="">Select DR</option>
+                  {drs.map((dr) => (
+                    <option key={dr.id} value={dr.id}>
+                      {dr.libelleuo}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="mb-3">
+                <label htmlFor="cmp" className="form-label">Complexe (CMP)</label>
+                <select
+                  className="form-control"
+                  id="cmp"
+                  value={selectedCmp}
+                  onChange={handleCmpChange}
+                  disabled={!selectedDr} // Disable until DR is selected
+                >
+                  <option value="">Select CMP</option>
+                  {cmps.map((cmp) => (
+                    <option key={cmp.id} value={cmp.id}>
+                      {cmp.libelleuo}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="mb-3">
+                <label htmlFor="efp" className="form-label">Etablissement de Formation Professionnelle (EFP)</label>
+                <select
+                  className="form-control"
+                  id="efp"
+                  value={selectedEfp}
+                  onChange={(e) => setSelectedEfp(e.target.value)}
+                  disabled={!selectedCmp} // Disable until CMP is selected
+                >
+                  <option value="">Select EFP</option>
+                  {efps.map((efp) => (
+                    <option key={efp.id} value={efp.id}>
+                      {efp.libelleuo}
+                    </option>
+                  ))}
+                </select>
+              </div>
               <button type="submit" className="btn btn-primary">Register</button>
             </form>
             {message && <p className="mt-3">{message}</p>}
