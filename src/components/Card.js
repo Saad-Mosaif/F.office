@@ -18,6 +18,7 @@ const API_URLS = {
   modeFormations: 'http://localhost:8080/api/reference-data/mode-formations',
   filieres: 'http://localhost:8080/api/filieres',
   cards: 'http://localhost:8080/api/cards/search',
+  filieresWithoutCards: 'http://localhost:8080/api/filieres/without-card',
 };
 
 const fetchData = async (setters, selectedCriteria) => {
@@ -29,25 +30,33 @@ const fetchData = async (setters, selectedCriteria) => {
       { data: niveauFormationsData },
       { data: anneeFormationsData },
       { data: modeFormationsData },
-      { data: filieresData },
+      { data: filieresWithoutCardsData },
       { data: cardsData }
     ] = await Promise.all([
       axios.get(API_URLS.typeFormations),
       axios.get(API_URLS.niveauFormations),
       axios.get(API_URLS.anneeFormations),
       axios.get(API_URLS.modeFormations),
-      axios.get(API_URLS.filieres, { params: selectedCriteria }),
+      axios.get(API_URLS.filieresWithoutCards),
       axios.get(API_URLS.cards, { params: selectedCriteria })
     ]);
+
+    console.log('Type Formations Data:', typeFormationsData);
+    console.log('Niveau Formations Data:', niveauFormationsData);
+    console.log('Annee Formations Data:', anneeFormationsData);
+    console.log('Mode Formations Data:', modeFormationsData);
+    console.log('Filieres Without Cards Data:', filieresWithoutCardsData);
+    console.log('Cards Data:', cardsData);
 
     setTypeFormations(typeFormationsData);
     setNiveauFormations(niveauFormationsData);
     setAnneeFormations(anneeFormationsData);
     setModeFormations(modeFormationsData);
 
+    // Combine filieres and cards into a single array with filieres first
     setData([
-      ...filieresData.map(item => ({ ...item, entityType: 'Filiere' })),
-      ...cardsData.map(item => ({ ...item, entityType: 'Card' }))
+      ...cardsData.map(item => ({ ...item, entityType: 'Card' })),
+      ...filieresWithoutCardsData.map(item => ({ ...item, entityType: 'Filiere' }))
     ]);
 
   } catch (error) {
@@ -78,6 +87,7 @@ const Card = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    console.log('Selected Criteria:', selectedCriteria);
     fetchData({
       setTypeFormations,
       setNiveauFormations,
@@ -88,6 +98,8 @@ const Card = () => {
       setLoading,
     }, selectedCriteria);
   }, [selectedCriteria]);
+  
+  console.log('Data:', data);
 
   const handleSelectionChange = (e) => {
     const { id, value } = e.target;
@@ -145,29 +157,30 @@ const Card = () => {
         <div className="table-responsive">
           <div className="table">
             <div className="table-header-background">
-              <DataTable value={data} paginator rows={rows} first={first} onPage={(e) => setFirst(e.first)} rowsPerPageOptions={[10, 20, 50]}>
-                <Column field="codeFil" header="Code Filière"></Column>
-                <Column field="intituler" header="Libellé Filière"></Column>
-                <Column field="effectif" header="Effectif" body={(rowData) => rowData.effectif ?? 'N/A'}></Column>
-                <Column field="datePrevueDemarrage" header="Date Prévue de Démarrage" body={(rowData) => rowData.datePrevueDemarrage ?? 'N/A'}></Column>
-                <Column field="statut" header="Statut" body={(rowData) => rowData.statut ?? 'N/A'}></Column>
-                <Column
-                  header="Action"
-                  body={(rowData) => (
-                    <>
-                      {rowData.entityType === 'Filiere' && (
-                        <a href="#" onClick={() => handleActionClick(rowData, 'Ajouter')}>Ajouter</a>
-                      )}
-                      {rowData.entityType === 'Card' && (
-                        <>
-                          <a href="#" onClick={() => handleActionClick(rowData, 'Modifier')}>Modifier</a> | 
-                          <a href="#" onClick={() => handleActionClick(rowData, 'Supprimer')}>Supprimer</a>
-                        </>
-                      )}
-                    </>
-                  )}
-                ></Column>
-              </DataTable>
+            <DataTable value={data} paginator rows={rows} first={first} onPage={(e) => setFirst(e.first)} rowsPerPageOptions={[10, 20, 50]}>
+  <Column field="codeFil" header="Code Filière"></Column>
+  <Column field="intituler" header="Libellé Filière"></Column>
+  <Column field="effectif" header="Effectif" body={(rowData) => rowData.effectif ?? 'N/A'}></Column>
+  <Column field="datePrevueDemarrage" header="Date Prévue de Démarrage" body={(rowData) => rowData.datePrevueDemarrage ?? 'N/A'}></Column>
+  <Column field="statut" header="Statut" body={(rowData) => rowData.statut ?? 'N/A'}></Column>
+  <Column
+    header="Action"
+    body={(rowData) => (
+      <>
+        {rowData.entityType === 'Filiere' && (
+          <a href="#" onClick={() => handleActionClick(rowData, 'Ajouter')}>Ajouter</a>
+        )}
+        {rowData.entityType === 'Card' && (
+          <>
+            <a href="#" onClick={() => handleActionClick(rowData, 'Modifier')}>Modifier</a> | 
+            <a href="#" onClick={() => handleActionClick(rowData, 'Supprimer')}>Supprimer</a>
+          </>
+        )}
+      </>
+    )}
+  ></Column>
+</DataTable>
+
             </div>
           </div>
         </div>
