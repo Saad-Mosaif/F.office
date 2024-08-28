@@ -77,13 +77,15 @@ const Register = () => {
     e.preventDefault();
     setMessage('');
     try {
+      const uniteOrganisationId = selectedEfp || selectedCmp || selectedDr || null;
+
       const response = await axios.post(
         'http://localhost:8080/api/auth/register',
         {
           email,
           password,
           role: { name: role },
-          uniteOrganisation: { id: selectedEfp } // Assuming you're registering with the EFP selected
+          uniteOrganisation: uniteOrganisationId ? { id: uniteOrganisationId } : null,
         },
         {
           headers: {
@@ -94,7 +96,8 @@ const Register = () => {
 
       setMessage(response.data); // The response is a string message
     } catch (error) {
-      setMessage(error.response?.data || 'Registration failed');
+      const errorMessage = error.response?.data?.message || error.response?.data || 'Registration failed';
+      setMessage(errorMessage);
     }
   };
 
@@ -197,7 +200,7 @@ const Register = () => {
               </div>
               <button type="submit" className="btn btn-primary">Register</button>
             </form>
-            {message && <p className="mt-3">{message}</p>}
+            {message && <p className="mt-3">{typeof message === 'string' ? message : 'An error occurred'}</p>}
           </div>
         </div>
       </div>
