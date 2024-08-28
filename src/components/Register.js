@@ -154,7 +154,7 @@ const Register = () => {
                   id="dr"
                   value={selectedDr}
                   onChange={handleDrChange}
-                  required
+                  
                 >
                   <option value="">Select DR</option>
                   {drs.map((dr) => (

@@ -29,8 +29,8 @@ const Login = () => {
                 }
             });
 
-            if (response.data.role) {
-                setUser({ email, role: response.data.role });
+            if (response.data.role && response.data.userId) { // Make sure to return userId from backend
+                setUser({ email, role: response.data.role, userId: response.data.userId });
                 if (response.data.role === 'ADMIN') {
                     navigate('/main');
                 } else if (response.data.role === 'DIRECTOR') {
@@ -40,7 +40,6 @@ const Login = () => {
                 setError(response.data.message);
             }
         } catch (error) {
-            // Extract the error message or a fallback message
             const errorMessage = error.response?.data?.message || 'Login failed';
             setError(errorMessage);
         }

@@ -1,12 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import axios from 'axios'; // Ensure axios is imported
+import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../App.css';
+import { UserContext } from '../UserContext';  // Import UserContext
 
 const FormAjout = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { user } = useContext(UserContext);  // Get the user from context
+
   const [formData, setFormData] = useState({
     codeFiliere: '',
     filiere: '',
@@ -17,13 +20,13 @@ const FormAjout = () => {
     effectif: '',
     datePrevueDemarrage: '',
     commentaire: '',
+    filiereId: ''
   });
 
   useEffect(() => {
-    console.log("Component mounted or location.state changed:", location.state);
     if (location.state) {
       const { codeFiliere, filiere, typeFormation, niveauFormation, anneeFormation, modeFormation, filiereId } = location.state;
-  
+
       // Initialize form data if location.state is present
       setFormData(prevData => ({
         ...prevData,
@@ -33,15 +36,10 @@ const FormAjout = () => {
         niveauFormation: niveauFormation || '',
         anneeFormation: anneeFormation || '',
         modeFormation: modeFormation || '',
-        filiereId : filiereId || '',
+        filiereId: filiereId || '',
       }));
     }
   }, [location.state]);
-  
-
-  useEffect(() => {
-    console.log("Selected Filiere:", formData); // Log the entire formData
-  }, [formData]); // Log only when formData changes
 
   const handleChange = (e) => {
     const { id, value } = e.target;
@@ -50,36 +48,30 @@ const FormAjout = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  console.log(e)
-    const  filiereId = formData.codeFiliere ;
-    console.log(filiereId)
 
-    
-    
-    // console.log("Location state:", location.state); // Log entire location.state
-    // console.log("Filiere ID:", filiereId); // Log filiereId
-  
-    // if (!filiereId) {
-    //   console.error('Filiere ID is undefined or null');
-    //   return;
-    // }
-  
+    if (!user || !user.userId) {
+      console.error('User ID is missing. Please make sure the user is logged in.');
+      return;
+    }
+
     const cardData = {
       filiereId: formData.filiereId,
       effectif: formData.effectif,
       datePrevueDemarrage: formData.datePrevueDemarrage,
       commentaire: formData.commentaire,
-    
     };
-  console.log(cardData)
+
+    console.log("Card Data:", cardData); // Debugging output
+
     try {
-      const response = await axios.post('http://localhost:8080/api/cards/create', cardData, {
+      // Pass userId as a query parameter
+      const response = await axios.post(`http://localhost:8080/api/cards/create?userId=${user.userId}`, cardData, {
         headers: {
           'Content-Type': 'application/json',
         },
       });
       console.log('Card created:', response.data);
-      navigate('/card'); // Navigate after success
+      navigate('/card');  // Navigate after success
     } catch (error) {
       console.error('Error saving card:', error.response ? error.response.data : error.message);
     }
