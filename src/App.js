@@ -7,13 +7,13 @@ import Mainpg from './components/Mainpg';
 import Mainpage2 from './components/Mainpage2';
 import Login from './components/Login';
 import Register from './components/Register';
-import Form from './components/Form';
-import UoList from './components/UoList';
 import EditUoForm from './components/EditUoForm';
 import FormAjout from './components/FormAjout';
 import Card from './components/Card';
+import EditForm from './components/EditForm';
 import ValidCard from './components/ValidCard'; // Import the ValidCard component
 import { UserContext, UserProvider } from './UserContext';
+
 
 function AppContent() {
   const { user, logout } = useContext(UserContext);
@@ -50,8 +50,7 @@ function AppContent() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/main" element={<Navigate to="/" />} />
-          <Route path="/form" element={<Navigate to="/" />} />
-          <Route path="/uo-list" element={<Navigate to="/" />} />
+          <Route path="/edit-card/:id" element={<EditForm />} />
           <Route path="/edit-uo/:id" element={<Navigate to="/" />} />
         </Routes>
       </div>
@@ -74,15 +73,6 @@ function AppContent() {
                     <Link className="nav-link" to="/main">Main</Link>
                   </li>
                   <li className="nav-item">
-                    <Link className="nav-link" to="/uo-list">Uo List</Link>
-                  </li>
-                  <li className="nav-item">
-                    <Link className="nav-link" to="/form">Form</Link>
-                  </li>
-                  <li className="nav-item">
-                    <Link className="nav-link" to="/form-ajout">Ajouter Form</Link>
-                  </li>
-                  <li className="nav-item">
                     <Link className="nav-link" to="/card">Card</Link>
                   </li>
                   <li className="nav-item">
@@ -93,13 +83,7 @@ function AppContent() {
               {user.role === 'DIR_EFP' && (
                 <>
                   <li className="nav-item">
-                    <Link className="nav-link" to="/uo-list">Uo List</Link>
-                  </li>
-                  <li className="nav-item">
                     <Link className="nav-link" to="/mainpage2">Main</Link>
-                  </li>
-                  <li className="nav-item">
-                    <Link className="nav-link" to="/form-ajout">Ajouter Form</Link>
                   </li>
                   <li className="nav-item">
                     <Link className="nav-link" to="/card">Card</Link>
@@ -122,11 +106,10 @@ function AppContent() {
         <Route path="/register" element={user ? <Navigate to={user.role === 'ADMIN' ? "/main" : user.role === 'DIR_EFP' ? "/mainpage2" : "/validcard"} /> : <Register />} />
         <Route path="/main" element={user.role === 'ADMIN' ? <Mainpg /> : <Navigate to="/" />} />
         <Route path="/mainpage2" element={user.role === 'DIR_EFP' ? <Mainpage2 /> : <Navigate to="/" />} />
-        <Route path="/form" element={(user.role === 'ADMIN' || user.role === 'DIR_EFP') ? <Form /> : <Navigate to="/" />} />
-        <Route path="/uo-list" element={(user.role === 'ADMIN' || user.role === 'DIR_EFP') ? <UoList /> : <Navigate to="/" />} />
         <Route path="/edit-uo/:id" element={(user.role === 'ADMIN' || user.role === 'DIR_EFP') ? <EditUoForm /> : <Navigate to="/" />} />
         <Route path="/form-ajout" element={(user.role === 'ADMIN' || user.role === 'DIR_EFP') ? <FormAjout /> : <Navigate to="/" />} />
         <Route path="/card" element={(user.role === 'ADMIN' || user.role === 'DIR_EFP') ? <Card /> : <Navigate to="/" />} />
+        <Route path="/edit-card/:id" element={(user.role === 'ADMIN' || user.role === 'DIR_EFP') ? <EditForm /> : <Navigate to="/" />} />
         <Route path="/validcard" element={(user.role === 'ADMIN' || user.role === 'DF' || user.role === 'DIR_CMP' || user.role === 'SRIO') ? <ValidCard /> : <Navigate to="/" />} /> {/* Added ValidCard route */}
       </Routes>
     </div>

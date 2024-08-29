@@ -108,9 +108,16 @@ const Card = () => {
       [`${id}Id`]: value
     }));
   };
-
+  const handleDeleteCard = async (cardId) => {
+    try {
+      await axios.delete(`http://localhost:8080/api/cards/delete/${cardId}`);
+      setData(data.filter(item => item.id !== cardId)); // Remove the deleted card from the state
+    } catch (error) {
+      console.error('Error deleting card:', error);
+      setError('Error deleting card.');
+    }
+  };  
   const handleActionClick = (rowData, action) => {
-    console.log(rowData, action);
     if (action === 'Ajouter') {
       const selectedCriteriaForCard = {
         codeFiliere: rowData.codeFil,
@@ -121,11 +128,15 @@ const Card = () => {
         anneeFormation: rowData.anneeFormation?.name || '',
         filiereId: rowData.id,
       };
-
       navigate('/form-ajout', { state: selectedCriteriaForCard });
+    } else if (action === 'Modifier') {
+      console.log(rowData.id);
+      navigate(`/edit-card/${rowData.id}`, { state: { cardData: rowData } });
+    } else if (action === 'Supprimer') {
+      handleDeleteCard(rowData.id);
     }
-    // Implement other actions based on the value of `action`
-  };
+  };  
+  
 
   return (
     <div className="container wider-container mt-5">
@@ -164,21 +175,22 @@ const Card = () => {
   <Column field="datePrevueDemarrage" header="Date Prévue de Démarrage" body={(rowData) => rowData.datePrevueDemarrage ?? 'N/A'}></Column>
   <Column field="statut" header="Statut" body={(rowData) => rowData.statut ?? 'N/A'}></Column>
   <Column
-    header="Action"
-    body={(rowData) => (
-      <>
-        {rowData.entityType === 'Filiere' && (
-          <a href="#" onClick={() => handleActionClick(rowData, 'Ajouter')}>Ajouter</a>
-        )}
-        {rowData.entityType === 'Card' && (
-          <>
-            <a href="#" onClick={() => handleActionClick(rowData, 'Modifier')}>Modifier</a> | 
-            <a href="#" onClick={() => handleActionClick(rowData, 'Supprimer')}>Supprimer</a>
-          </>
-        )}
-      </>
-    )}
-  ></Column>
+  header="Action"
+  body={(rowData) => (
+    <>
+      {rowData.entityType === 'Filiere' && (
+        <a onClick={() => handleActionClick(rowData, 'Ajouter')} style={{ cursor: 'pointer', color: '#007bff' }}>Ajouter</a>
+      )}
+      {rowData.entityType === 'Card' && (
+        <>
+          <a onClick={() => handleActionClick(rowData, 'Modifier')} style={{ cursor: 'pointer', color: '#007bff' }}>Modifier</a> | 
+          <a onClick={() => handleActionClick(rowData, 'Supprimer')} style={{ cursor: 'pointer', color: '#dc3545' }}>Supprimer</a>
+        </>
+      )}
+    </>
+  )}
+></Column>
+
 </DataTable>
 
             </div>
