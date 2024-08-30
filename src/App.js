@@ -3,8 +3,6 @@ import { BrowserRouter as Router, Route, Routes, Link, Navigate, useNavigate } f
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-import Mainpg from './components/Mainpg';
-import Mainpage2 from './components/Mainpage2';
 import Login from './components/Login';
 import Register from './components/Register';
 import EditUoForm from './components/EditUoForm';
@@ -29,7 +27,7 @@ function AppContent() {
       <div className="App">
         <nav className="navbar navbar-expand-lg navbar-light bg-light sticky-top">
           <div className="container-fluid">
-            <Link className="navbar-brand" to="/">React Auth</Link>
+            <Link className="navbar-brand" to="/">OFPPT</Link>
             <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
               <span className="navbar-toggler-icon"></span>
             </button>
@@ -49,7 +47,6 @@ function AppContent() {
           <Route path="/" element={<Login />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/main" element={<Navigate to="/" />} />
           <Route path="/edit-card/:id" element={<EditForm />} />
           <Route path="/edit-uo/:id" element={<Navigate to="/" />} />
         </Routes>
@@ -61,7 +58,7 @@ function AppContent() {
     <div className="App">
       <nav className="navbar navbar-expand-lg navbar-light bg-light sticky-top">
         <div className="container-fluid">
-          <Link className="navbar-brand" to="/">React Auth</Link>
+          <Link className="navbar-brand" to="/">OFPPT</Link>
           <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span className="navbar-toggler-icon"></span>
           </button>
@@ -69,9 +66,6 @@ function AppContent() {
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
               {user.role === 'ADMIN' && (
                 <>
-                  <li className="nav-item">
-                    <Link className="nav-link" to="/main">Main</Link>
-                  </li>
                   <li className="nav-item">
                     <Link className="nav-link" to="/card">Card</Link>
                   </li>
@@ -82,9 +76,6 @@ function AppContent() {
               )}
               {user.role === 'DIR_EFP' && (
                 <>
-                  <li className="nav-item">
-                    <Link className="nav-link" to="/mainpage2">Main</Link>
-                  </li>
                   <li className="nav-item">
                     <Link className="nav-link" to="/card">Card</Link>
                   </li>
@@ -101,11 +92,9 @@ function AppContent() {
         </div>
       </nav>
       <Routes>
-        <Route path="/" element={<Navigate to={user.role === 'ADMIN' ? "/main" : user.role === 'DIR_EFP' ? "/mainpage2" : "/validcard"} />} />
-        <Route path="/login" element={user ? <Navigate to={user.role === 'ADMIN' ? "/main" : user.role === 'DIR_EFP' ? "/mainpage2" : "/validcard"} /> : <Login />} />
-        <Route path="/register" element={user ? <Navigate to={user.role === 'ADMIN' ? "/main" : user.role === 'DIR_EFP' ? "/mainpage2" : "/validcard"} /> : <Register />} />
-        <Route path="/main" element={user.role === 'ADMIN' ? <Mainpg /> : <Navigate to="/" />} />
-        <Route path="/mainpage2" element={user.role === 'DIR_EFP' ? <Mainpage2 /> : <Navigate to="/" />} />
+        <Route path="/" element={<Navigate to={user.role === 'ADMIN' ? "/card" : user.role === 'DIR_EFP' ? "/mainpage2" : "/validcard"} />} />
+        <Route path="/login" element={user ? <Navigate to={user.role === 'ADMIN' ? "/card" : user.role === 'DIR_EFP' ? "/card" : "/validcard"} /> : <Login />} />
+        <Route path="/register" element={user ? <Navigate to={user.role === 'ADMIN' ? "/card" : user.role === 'DIR_EFP' ? "/mainpage2" : "/validcard"} /> : <Register />} />
         <Route path="/edit-uo/:id" element={(user.role === 'ADMIN' || user.role === 'DIR_EFP') ? <EditUoForm /> : <Navigate to="/" />} />
         <Route path="/form-ajout" element={(user.role === 'ADMIN' || user.role === 'DIR_EFP') ? <FormAjout /> : <Navigate to="/" />} />
         <Route path="/card" element={(user.role === 'ADMIN' || user.role === 'DIR_EFP') ? <Card /> : <Navigate to="/" />} />

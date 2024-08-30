@@ -44,11 +44,12 @@ const fetchData = async (setters, selectedCriteria, selectedCmp) => {
     setAnneeFormations(anneeFormationsData);
     setModeFormations(modeFormationsData);
     setData(cardsData);
+    console.log(typeFormationsData);
 
     if (selectedCmp) {
       const { data: etablissementsData } = await axios.get(`${API_URLS.etablissements}/${selectedCmp}`);
       console.log("Fetched Etablissements Data:", etablissementsData);
-      setEtablissements(etablissementsData);
+      setEtablissements(etablissementsData);  
     }
 
   } catch (error) {
@@ -57,6 +58,7 @@ const fetchData = async (setters, selectedCriteria, selectedCmp) => {
   } finally {
     setLoading(false);
   }
+  
 };
 
 const ValidCard = () => {
