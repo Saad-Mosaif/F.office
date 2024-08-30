@@ -231,3 +231,11 @@ form {
 .d-flex.justify-content-between.mt-4 {
     justify-content: center;
 }
+.centered-text {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Horizontally centers text */
+    justify-content: center; /* Vertically centers text if height is defined */
+    height: 100%; /* Adjust this if needed */
+    text-align: center; /* Centers text horizontally within the container */
+  }

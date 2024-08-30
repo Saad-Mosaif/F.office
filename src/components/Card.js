@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -10,6 +10,7 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Paginator } from 'primereact/paginator';
 import '../App.css';
+import { UserContext } from '../UserContext';
 
 const API_URLS = {
   typeFormations: 'http://localhost:8080/api/reference-data/type-formations',
@@ -19,6 +20,7 @@ const API_URLS = {
   filieres: 'http://localhost:8080/api/filieres',
   cards: 'http://localhost:8080/api/cards/search',
   filieresWithoutCards: 'http://localhost:8080/api/filieres/without-card',
+  userUoLibelle: 'http://localhost:8080/api/auth/user',
 };
 
 const fetchData = async (setters, selectedCriteria) => {
@@ -69,9 +71,12 @@ const fetchData = async (setters, selectedCriteria) => {
 
 const Card = () => {
   const [typeFormations, setTypeFormations] = useState([]);
+  const { user } = useContext(UserContext); // Access user from context
+
   const [niveauFormations, setNiveauFormations] = useState([]);
   const [anneeFormations, setAnneeFormations] = useState([]);
   const [modeFormations, setModeFormations] = useState([]);
+  const [uoLibelle, setUoLibelle] = useState(''); 
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -87,17 +92,31 @@ const Card = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log('Selected Criteria:', selectedCriteria);
+    // Fetch uoLibelle when the component mounts
+    if (user?.userId) {
+      axios.get(`${API_URLS.userUoLibelle}/${user.userId}/uo-libelle`)
+        .then(response => {
+          const libelle = response.data;
+          setUoLibelle(libelle);  // This will now contain the libelleuo
+          console.log("Fetched UO Libelle:", libelle);
+        })
+        .catch(error => {
+          console.error('Error fetching uo.libelle:', error);
+        });
+    }
+
+    // Fetch other data
     fetchData({
       setTypeFormations,
       setNiveauFormations,
       setAnneeFormations,
       setModeFormations,
+      
       setData,
       setError,
       setLoading,
-    }, selectedCriteria);
-  }, [selectedCriteria]);
+    }, selectedCriteria, );
+  }, [selectedCriteria, user]);
   
   console.log('Data:', data);
 
@@ -108,6 +127,7 @@ const Card = () => {
       [`${id}Id`]: value
     }));
   };
+  
   const handleDeleteCard = async (cardId) => {
     try {
       await axios.delete(`http://localhost:8080/api/cards/delete/${cardId}`);
@@ -117,7 +137,10 @@ const Card = () => {
       setError('Error deleting card.');
     }
   };  
+  
   const handleActionClick = (rowData, action) => {
+    console.log('Row Data:', rowData); // Check the complete row data
+    console.log('Status Value:', rowData.statut); // Check the status value
     if (action === 'Ajouter') {
       const selectedCriteriaForCard = {
         codeFiliere: rowData.codeFil,
@@ -136,12 +159,26 @@ const Card = () => {
       handleDeleteCard(rowData.id);
     }
   };  
-  
+
+  // Function to map statut values to their corresponding labels
+  const getStatutLabel = (statut) => {
+    switch (statut) {
+      case 1:
+        return 'Added';
+      case 2:
+        return 'Sent';
+      case 3:
+        return 'Validated';
+      default:
+        return 'Unknown';
+    }
+  };
 
   return (
     <div className="container wider-container mt-5">
-      <div className="jumbotron p-5 rounded mb-4" style={{ marginTop: '1000px', backgroundColor: '#405D45' }}>
-        <h1 className="display-4">Gestion de la carte de l’établissement X</h1>
+      <div className="jumbotron p-5 rounded mb-4 centered-text" style={{ marginTop:'1000px',backgroundColor: '#405D45' }}>
+        <h1 className="display-4">Consultation Carte</h1>
+        <h1 className="display-4">{uoLibelle}</h1>
       </div>
       <div className="table-container">
         <form>
@@ -168,31 +205,29 @@ const Card = () => {
         <div className="table-responsive">
           <div className="table">
             <div className="table-header-background">
-            <DataTable value={data} paginator rows={rows} first={first} onPage={(e) => setFirst(e.first)} rowsPerPageOptions={[10, 20, 50]}>
-  <Column field="codeFil" header="Code Filière"></Column>
-  <Column field="intituler" header="Libellé Filière"></Column>
-  <Column field="effectif" header="Effectif" body={(rowData) => rowData.effectif ?? 'N/A'}></Column>
-  <Column field="datePrevueDemarrage" header="Date Prévue de Démarrage" body={(rowData) => rowData.datePrevueDemarrage ?? 'N/A'}></Column>
-  <Column field="statut" header="Statut" body={(rowData) => rowData.statut ?? 'N/A'}></Column>
-  <Column
-  header="Action"
-  body={(rowData) => (
-    <>
-      {rowData.entityType === 'Filiere' && (
-        <a onClick={() => handleActionClick(rowData, 'Ajouter')} style={{ cursor: 'pointer', color: '#007bff' }}>Ajouter</a>
-      )}
-      {rowData.entityType === 'Card' && (
-        <>
-          <a onClick={() => handleActionClick(rowData, 'Modifier')} style={{ cursor: 'pointer', color: '#007bff' }}>Modifier</a> | 
-          <a onClick={() => handleActionClick(rowData, 'Supprimer')} style={{ cursor: 'pointer', color: '#dc3545' }}>Supprimer</a>
-        </>
-      )}
-    </>
-  )}
-></Column>
-
-</DataTable>
-
+              <DataTable value={data} paginator rows={rows} first={first} onPage={(e) => setFirst(e.first)} rowsPerPageOptions={[10, 20, 50]}>
+                <Column field="codeFil" header="Code Filière"></Column>
+                <Column field="intituler" header="Libellé Filière"></Column>
+                <Column field="effectif" header="Effectif" body={(rowData) => rowData.effectif ?? 'N/A'}></Column>
+                <Column field="datePrevueDemarrage" header="Date Prévue de Démarrage" body={(rowData) => rowData.datePrevueDemarrage ?? 'N/A'}></Column>
+                <Column field="statut" header="Statut" body={(rowData) => rowData.entityType === 'Card' ? getStatutLabel(rowData.statut) : 'N/A'}></Column>
+                <Column
+                  header="Action"
+                  body={(rowData) => (
+                    <>
+                      {rowData.entityType === 'Filiere' && (
+                        <a onClick={() => handleActionClick(rowData, 'Ajouter')} style={{ cursor: 'pointer', color: '#007bff' }}>Ajouter</a>
+                      )}
+                      {rowData.entityType === 'Card' && (
+                        <>
+                          <a onClick={() => handleActionClick(rowData, 'Modifier')} style={{ cursor: 'pointer', color: '#007bff' }}>Modifier</a> | 
+                          <a onClick={() => handleActionClick(rowData, 'Supprimer')} style={{ cursor: 'pointer', color: '#dc3545' }}>Supprimer</a>
+                        </>
+                      )}
+                    </>
+                  )}
+                ></Column>
+              </DataTable>
             </div>
           </div>
         </div>

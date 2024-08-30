@@ -121,7 +121,7 @@ const ValidCard = () => {
 
   return (
     <div className="container wider-container mt-5">
-      <div className="jumbotron p-5 rounded mb-4" style={{ backgroundColor: '#405D45' }}>
+      <div className="jumbotron p-5 rounded mb-4" style={{ marginTop:'1000px',backgroundColor: '#405D45' }}>
         <h1 className="display-4">Validation des Cartes recu ({uoLibelle})</h1>
       </div>
       <div className="table-container">
