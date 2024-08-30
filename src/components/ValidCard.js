@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'primereact/resources/themes/saga-blue/theme.css';
@@ -9,17 +9,20 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Paginator } from 'primereact/paginator';
 import '../App.css';
+import { UserContext } from '../UserContext';
 
 const API_URLS = {
   typeFormations: 'http://localhost:8080/api/reference-data/type-formations',
   niveauFormations: 'http://localhost:8080/api/reference-data/niveau-formations',
   anneeFormations: 'http://localhost:8080/api/reference-data/annee-formations',
   modeFormations: 'http://localhost:8080/api/reference-data/mode-formations',
+  etablissements: 'http://localhost:8080/api/unite-organisations/efp/by-cmp',
   cards: 'http://localhost:8080/api/cards/search',
+  userUoLibelle: 'http://localhost:8080/api/auth/user', // Endpoint to get the user's uo.libelle
 };
 
-const fetchData = async (setters, selectedCriteria) => {
-  const { setTypeFormations, setNiveauFormations, setAnneeFormations, setModeFormations, setData, setError, setLoading } = setters;
+const fetchData = async (setters, selectedCriteria, selectedCmp) => {
+  const { setTypeFormations, setNiveauFormations, setAnneeFormations, setModeFormations, setEtablissements, setData, setError, setLoading } = setters;
 
   try {
     const [
@@ -42,6 +45,12 @@ const fetchData = async (setters, selectedCriteria) => {
     setModeFormations(modeFormationsData);
     setData(cardsData);
 
+    if (selectedCmp) {
+      const { data: etablissementsData } = await axios.get(`${API_URLS.etablissements}/${selectedCmp}`);
+      console.log("Fetched Etablissements Data:", etablissementsData);
+      setEtablissements(etablissementsData);
+    }
+
   } catch (error) {
     setError('Error fetching data.');
     console.error('Error fetching data:', error);
@@ -51,46 +60,69 @@ const fetchData = async (setters, selectedCriteria) => {
 };
 
 const ValidCard = () => {
+  const { user } = useContext(UserContext); // Access user from context
+  const [uoLibelle, setUoLibelle] = useState(''); 
   const [typeFormations, setTypeFormations] = useState([]);
   const [niveauFormations, setNiveauFormations] = useState([]);
   const [anneeFormations, setAnneeFormations] = useState([]);
   const [modeFormations, setModeFormations] = useState([]);
+  const [etablissements, setEtablissements] = useState([]);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(10);
+  const [selectedCmp, setSelectedCmp] = useState(null);
   const [selectedCriteria, setSelectedCriteria] = useState({
     modeFormationId: null,
     typeFormationId: null,
     niveauFormationId: null,
-    anneeFormationId: null
+    anneeFormationId: null,
   });
 
   useEffect(() => {
+    // Fetch uoLibelle when the component mounts
+    if (user?.userId) {
+      axios.get(`${API_URLS.userUoLibelle}/${user.userId}/uo-libelle`)
+        .then(response => {
+          const libelle = response.data;
+          setUoLibelle(libelle);  // This will now contain the libelleuo
+          console.log("Fetched UO Libelle:", libelle);
+        })
+        .catch(error => {
+          console.error('Error fetching uo.libelle:', error);
+        });
+    }
+
+    // Fetch other data
     fetchData({
       setTypeFormations,
       setNiveauFormations,
       setAnneeFormations,
       setModeFormations,
+      setEtablissements,
       setData,
       setError,
       setLoading,
-    }, selectedCriteria);
-  }, [selectedCriteria]);
+    }, selectedCriteria, selectedCmp);
+  }, [selectedCriteria, selectedCmp, user]);
 
   const handleSelectionChange = (e) => {
     const { id, value } = e.target;
-    setSelectedCriteria(prevCriteria => ({
-      ...prevCriteria,
-      [`${id}Id`]: value
-    }));
+    if (id === 'cmp') {
+      setSelectedCmp(value);
+    } else {
+      setSelectedCriteria(prevCriteria => ({
+        ...prevCriteria,
+        [`${id}Id`]: value,
+      }));
+    }
   };
 
   return (
     <div className="container wider-container mt-5">
       <div className="jumbotron p-5 rounded mb-4" style={{ backgroundColor: '#405D45' }}>
-        <h1 className="display-4">Validation des Cartes</h1>
+        <h1 className="display-4">Validation des Cartes recu ({uoLibelle})</h1>
       </div>
       <div className="table-container">
         <form>
@@ -100,6 +132,7 @@ const ValidCard = () => {
               { label: 'Niveau de formation', id: 'niveauFormation', options: niveauFormations },
               { label: 'Année de formation', id: 'anneeFormation', options: anneeFormations },
               { label: 'Mode de formation', id: 'modeFormation', options: modeFormations },
+              { label: 'Établissement', id: 'etablissement', options: etablissements.map(etab => ({ id: etab.id, name: etab.libelleuo })) },
             ].map(({ label, id, options }, index) => (
               <div className="col-md-3" key={index}>
                 <label htmlFor={id} className="form-label">{label}:</label>
@@ -125,7 +158,7 @@ const ValidCard = () => {
                 <Column
                   header="Action"
                   body={(rowData) => (
-                    <div className="action-buttons">
+                    <div className="actiqaon-buttons">
                       <button className="btn btn-success">Valider</button>
                       <button className="btn btn-danger ml-2">Rejeter</button>
                     </div>
