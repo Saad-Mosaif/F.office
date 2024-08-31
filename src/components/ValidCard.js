@@ -82,32 +82,34 @@ const ValidCard = () => {
     anneeFormationId: null,
   });
 
-  useEffect(() => {
-    // Fetch uoLibelle when the component mounts
+ useEffect(() => {
+    console.log('User:', user);
+    console.log('Fetching UO Libelle for user ID:', user?.userId);
+
     if (user?.userId) {
       axios.get(`${API_URLS.userUoLibelle}/${user.userId}/uo-libelle`)
-        .then(response => {
-          const libelle = response.data;
-          setUoLibelle(libelle);  // This will now contain the libelleuo
-          console.log("Fetched UO Libelle:", libelle);
-        })
-        .catch(error => {
-          console.error('Error fetching uo.libelle:', error);
-        });
+          .then(response => {
+              const { libelle, uoId } = response.data;
+              setUoLibelle(libelle);
+              setSelectedCmp(uoId); // Store uoId in selectedCmp
+              console.log('Fetched UO Libelle:', libelle, 'UO ID:', uoId);
+          })
+          .catch(error => {
+              console.error('Error fetching uo.libelle:', error);
+          });
     }
 
-    // Fetch other data
     fetchData({
-      setTypeFormations,
-      setNiveauFormations,
-      setAnneeFormations,
-      setModeFormations,
-      setEtablissements,
-      setData,
-      setError,
-      setLoading,
+        setTypeFormations,
+        setNiveauFormations,
+        setAnneeFormations,
+        setModeFormations,
+        setEtablissements,
+        setData,
+        setError,
+        setLoading,
     }, selectedCriteria, selectedCmp);
-  }, [selectedCriteria, selectedCmp, user]);
+}, [selectedCriteria, selectedCmp, user]);
 
   const handleSelectionChange = (e) => {
     const { id, value } = e.target;
@@ -124,7 +126,7 @@ const ValidCard = () => {
   return (
     <div className="container wider-container mt-5">
       <div className="jumbotron p-5 rounded mb-4" style={{ marginTop:'1000px',backgroundColor: '#405D45' }}>
-        <h1 className="display-4">Validation des Cartes recu ({uoLibelle})</h1>
+      <h1 className="display-4">Validation des Cartes recu ({uoLibelle})</h1>
       </div>
       <div className="table-container">
         <form>

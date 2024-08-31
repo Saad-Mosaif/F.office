@@ -32,9 +32,9 @@ const Login = () => {
             if (response.data.role && response.data.userId) { // Make sure to return userId from backend
                 setUser({ email, role: response.data.role, userId: response.data.userId });
                 if (response.data.role === 'ADMIN') {
-                    navigate('/main');
+                    navigate('/card');
                 } else if (response.data.role === 'DIRECTOR') {
-                    navigate('/main');
+                    navigate('/card');
                 }
             } else {
                 setError(response.data.message);
