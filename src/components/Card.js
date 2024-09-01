@@ -250,7 +250,7 @@ const Card = () => {
         <div className="table-responsive">
           <div className="table">
             <div className="table-header-background">
-            <DataTable value={data.filter(item => !item.isHidden)} paginator rows={rows} first={first} onPage={(e) => setFirst(e.first)} rowsPerPageOptions={[10, 20, 50]}>
+              <DataTable value={data.filter(item => !item.isHidden)} paginator rows={rows} first={first} onPage={(e) => setFirst(e.first)} rowsPerPageOptions={[10, 20, 50]}>
                 <Column field="codeFil" header="Code Filière"></Column>
                 <Column field="intituler" header="Libellé Filière"></Column>
                 <Column field="effectif" header="Effectif" body={(rowData) => rowData.effectif ?? 'N/A'}></Column>

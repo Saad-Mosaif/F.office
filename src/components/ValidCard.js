@@ -44,7 +44,7 @@ const fetchData = async (setters, selectedCriteria, selectedCmp) => {
     setAnneeFormations(anneeFormationsData);
     setModeFormations(modeFormationsData);
     setData(cardsData);
-    console.log(typeFormationsData);
+    console.log('Fetched cards data:', cardsData);
 
     if (selectedCmp) {
       const { data: etablissementsData } = await axios.get(`${API_URLS.etablissements}/${selectedCmp}`);
@@ -58,7 +58,6 @@ const fetchData = async (setters, selectedCriteria, selectedCmp) => {
   } finally {
     setLoading(false);
   }
-  
 };
 
 const ValidCard = () => {
@@ -82,7 +81,7 @@ const ValidCard = () => {
     anneeFormationId: null,
   });
 
- useEffect(() => {
+  useEffect(() => {
     console.log('User:', user);
     console.log('Fetching UO Libelle for user ID:', user?.userId);
 
@@ -109,7 +108,7 @@ const ValidCard = () => {
         setError,
         setLoading,
     }, selectedCriteria, selectedCmp);
-}, [selectedCriteria, selectedCmp, user]);
+  }, [selectedCriteria, selectedCmp, user]);
 
   const handleSelectionChange = (e) => {
     const { id, value } = e.target;
@@ -123,10 +122,48 @@ const ValidCard = () => {
     }
   };
 
+  const handleValidate = async (cardId) => {
+    try {
+        await axios.put(`http://localhost:8080/api/cards/${cardId}/update-stat`, { statut: 3 });
+        // Refresh data to reflect the updated status
+        fetchData({
+            setTypeFormations,
+            setNiveauFormations,
+            setAnneeFormations,
+            setModeFormations,
+            setData,
+            setError,
+            setLoading,
+        }, selectedCriteria, selectedCmp);
+    } catch (error) {
+        console.error('Error validating card:', error);
+        setError('Error validating card.');
+    }
+  };
+
+  const handleReject = async (cardId) => {
+    try {
+        await axios.put(`http://localhost:8080/api/cards/${cardId}/update-stat`, { statut: 1 });
+        // Refresh data to reflect the updated status
+        fetchData({
+            setTypeFormations,
+            setNiveauFormations,
+            setAnneeFormations,
+            setModeFormations,
+            setData,
+            setError,
+            setLoading,
+        }, selectedCriteria, selectedCmp);
+    } catch (error) {
+        console.error('Error rejecting card:', error);
+        setError('Error rejecting card.');
+    }
+  };
+
   return (
     <div className="container wider-container mt-5">
-      <div className="jumbotron p-5 rounded mb-4" style={{ marginTop:'1000px',backgroundColor: '#405D45' }}>
-      <h1 className="display-4">Validation des Cartes recu ({uoLibelle})</h1>
+      <div className="jumbotron p-5 rounded mb-4" style={{marginTop: '500px', backgroundColor: '#405D45' }}>
+        <h1 className="display-4">Validation des Cartes reçues ({uoLibelle})</h1>
       </div>
       <div className="table-container">
         <form>
@@ -136,7 +173,7 @@ const ValidCard = () => {
               { label: 'Niveau de formation', id: 'niveauFormation', options: niveauFormations },
               { label: 'Année de formation', id: 'anneeFormation', options: anneeFormations },
               { label: 'Mode de formation', id: 'modeFormation', options: modeFormations },
-              { label: 'Établissement', id: 'etablissement', options: etablissements.map(etab => ({ id: etab.id, name: etab.libelleuo })) },
+              { label: 'Établissement', id: 'cmp', options: etablissements.map(etab => ({ id: etab.id, name: etab.libelleuo })) },
             ].map(({ label, id, options }, index) => (
               <div className="col-md-3" key={index}>
                 <label htmlFor={id} className="form-label">{label}:</label>
@@ -161,13 +198,39 @@ const ValidCard = () => {
                 <Column field="datePrevueDemarrage" header="Date Prévue de Démarrage"></Column>
                 <Column
                   header="Action"
-                  body={(rowData) => (
-                    <div className="actiqaon-buttons">
-                      <button className="btn btn-success">Valider</button>
-                      <button className="btn btn-danger ml-2">Rejeter</button>
-                    </div>
-                  )}
-                ></Column>
+                  body={(rowData) => {
+                    const isReadOnly = rowData.statut === 1 || rowData.statut === 3;
+                    return (
+                      <>
+                        <button
+                          onClick={() => handleValidate(rowData.id)}
+                          style={{ 
+                            cursor: isReadOnly ? 'not-allowed' : 'pointer', 
+                            color: rowData.statut === 2 ? '#007bff' : '#6c757d',
+                            border: 'none',
+                            background: 'none'
+                          }}
+                          disabled={isReadOnly || rowData.statut !== 2}
+                        >
+                          Valider
+                        </button>
+                        |
+                        <button
+                          onClick={() => handleReject(rowData.id)}
+                          style={{ 
+                            cursor: isReadOnly ? 'not-allowed' : 'pointer', 
+                            color: '#dc3545', 
+                            border: 'none', 
+                            background: 'none'
+                          }}
+                          disabled={isReadOnly}
+                        >
+                          Rejeter
+                        </button>
+                      </>
+                    );
+                  }}
+                />
               </DataTable>
             </div>
           </div>
