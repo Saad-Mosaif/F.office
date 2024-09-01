@@ -92,9 +92,9 @@ function AppContent() {
         </div>
       </nav>
       <Routes>
-        <Route path="/" element={<Navigate to={user.role === 'ADMIN' ? "/card" : user.role === 'DIR_EFP' ? "/mainpage2" : "/validcard"} />} />
+        <Route path="/" element={<Navigate to={user.role === 'ADMIN' ? "/card" : user.role === 'DIR_EFP' ? "/card" : "/validcard"} />} />
         <Route path="/login" element={user ? <Navigate to={user.role === 'ADMIN' ? "/card" : user.role === 'DIR_EFP' ? "/card" : "/validcard"} /> : <Login />} />
-        <Route path="/register" element={user ? <Navigate to={user.role === 'ADMIN' ? "/card" : user.role === 'DIR_EFP' ? "/mainpage2" : "/validcard"} /> : <Register />} />
+        <Route path="/register" element={user ? <Navigate to={user.role === 'ADMIN' ? "/card" : user.role === 'DIR_EFP' ? "/card" : "/validcard"} /> : <Register />} />
         <Route path="/edit-uo/:id" element={(user.role === 'ADMIN' || user.role === 'DIR_EFP') ? <EditUoForm /> : <Navigate to="/" />} />
         <Route path="/form-ajout" element={(user.role === 'ADMIN' || user.role === 'DIR_EFP') ? <FormAjout /> : <Navigate to="/" />} />
         <Route path="/card" element={(user.role === 'ADMIN' || user.role === 'DIR_EFP') ? <Card /> : <Navigate to="/" />} />

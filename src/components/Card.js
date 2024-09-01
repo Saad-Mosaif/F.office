@@ -39,23 +39,16 @@ const fetchData = async (setters, selectedCriteria) => {
       axios.get(API_URLS.niveauFormations),
       axios.get(API_URLS.anneeFormations),
       axios.get(API_URLS.modeFormations),
-      axios.get(API_URLS.filieresWithoutCards),
+      axios.get(API_URLS.filieresWithoutCards, { params: selectedCriteria }), // Use selectedCriteria to filter
       axios.get(API_URLS.cards, { params: selectedCriteria })
     ]);
 
-    console.log('Type Formations Data:', typeFormationsData);
-    console.log('Niveau Formations Data:', niveauFormationsData);
-    console.log('Annee Formations Data:', anneeFormationsData);
-    console.log('Mode Formations Data:', modeFormationsData);
-    console.log('Filieres Without Cards Data:', filieresWithoutCardsData);
-    console.log('Cards Data:', cardsData);
-
+    // Process and combine data
     setTypeFormations(typeFormationsData);
     setNiveauFormations(niveauFormationsData);
     setAnneeFormations(anneeFormationsData);
     setModeFormations(modeFormationsData);
 
-    // Combine filieres and cards into a single array with filieres first
     setData([
       ...cardsData.map(item => ({ ...item, entityType: 'Card' })),
       ...filieresWithoutCardsData.map(item => ({ ...item, entityType: 'Filiere' }))
@@ -68,6 +61,7 @@ const fetchData = async (setters, selectedCriteria) => {
     setLoading(false);
   }
 };
+
 
 const Card = () => {
   const [typeFormations, setTypeFormations] = useState([]);
@@ -92,18 +86,22 @@ const Card = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch uoLibelle when the component mounts
+    console.log('User:', user);
+    console.log('Fetching UO Libelle for user ID:', user?.userId);
+
     if (user?.userId) {
       axios.get(`${API_URLS.userUoLibelle}/${user.userId}/uo-libelle`)
-        .then(response => {
-          const libelle = response.data;
-          setUoLibelle(libelle);  // This will now contain the libelleuo
-          console.log("Fetched UO Libelle:", libelle);
-        })
-        .catch(error => {
-          console.error('Error fetching uo.libelle:', error);
-        });
+          .then(response => {
+              const { libelle, uoId } = response.data;
+              setUoLibelle(libelle);
+              setSelectedCmp(uoId); // Store uoId in selectedCmp
+              console.log('Fetched UO Libelle:', libelle, 'UO ID:', uoId);
+          })
+          .catch(error => {
+              console.error('Error fetching uo.libelle:', error);
+          });
     }
+
 
     // Fetch other data
     fetchData({
